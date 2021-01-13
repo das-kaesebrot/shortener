@@ -1,12 +1,15 @@
 #include <iostream>
 #include <stdlib.h>
+#include <iterator>
 
-#include <cgicc/CgiDefs.h> 
-#include <cgicc/Cgicc.h> 
-#include <cgicc/HTTPHTMLHeader.h> 
-#include <cgicc/HTMLClasses.h> 
+#include "cgicc/Cgicc.h"
+#include "cgicc/HTTPHTMLHeader.h"
+#include "cgicc/HTMLClasses.h"
 
-const std::string ENV[24] = {
+using namespace std;
+
+
+const std::string ENV[] = {
    "COMSPEC", "DOCUMENT_ROOT", "GATEWAY_INTERFACE",   
    "HTTP_ACCEPT", "HTTP_ACCEPT_ENCODING",             
    "HTTP_ACCEPT_LANGUAGE", "HTTP_CONNECTION",         
