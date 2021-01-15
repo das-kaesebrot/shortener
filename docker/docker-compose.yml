@@ -3,9 +3,10 @@ version: "2"
 services:
   httpd:
     container_name: ksbrt-shortener-apache
-    image: httpd:2.4
+    # image: httpd:2.4
+    build: .
     ports:
-      - 8080:80
+      - 8070:80
     volumes:
       - ../:/usr/local/apache2/cgi-bin:ro
       - ./apache-cgi.conf:/usr/local/apache2/conf/httpd.conf:ro
