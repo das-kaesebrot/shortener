@@ -11,17 +11,25 @@ using namespace cgicc;
 
 int main(int argc, char *argv[])
 {
-    try {
+   string website_title = "Kaesebrot's URL shortener";
+   try {
       Cgicc cgi;
+
+      // get Path Info
+      string querystr = cgi.getEnvironment().getQueryString();
 
       // Send HTTP header
       cout << HTTPHTMLHeader() << endl;
 
       // Set up the HTML document
-      cout << html() << head(title("cgicc example")) << endl;
-      cout << body("Test") << html() << endl;
+      cout << html() << head(title(website_title)) << endl;
+      cout << body("Query string: " + querystr) << html() << endl;
+
+      // switch case
    }
    catch(exception& e) {
-      // handle any errors - omitted for brevity
+      cout << HTTPHTMLHeader() << endl;
+      cout << html() << head(title(website_title)) << endl;
+      cout << body("An unknown exception has occured") << html() << endl;
    }
 }
