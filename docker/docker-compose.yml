@@ -6,7 +6,7 @@ services:
     # image: httpd:2.4
     build: .
     ports:
-      - 8070:80
+      - 127.0.0.1:8000:80
     volumes:
       - ../:/usr/local/apache2/cgi-bin:ro
       - ./apache-cgi.conf:/usr/local/apache2/conf/httpd.conf:ro
