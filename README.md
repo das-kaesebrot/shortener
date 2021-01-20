@@ -5,5 +5,5 @@ Once it is done, the service will be deployed to a server serving the [ksbrt.de]
 
 # Requirements
 - C++17
-- cgicc
+- cgicc (`libcgicc-dev` on Debian)
 - Apache httpd (or some other web+CGI server combination)
