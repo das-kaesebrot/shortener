@@ -1,9 +1,4 @@
 # About
-This project aims to create a simple and fast self-hosted URL shortening service (possibly also providing a REST API) utilizing CGI and some sort of database connection all being written in C++ - as a challenge to myself and to improve my programming skills.
+This project aims to create a simple and fast self-hosted URL shortening service (possibly also providing a REST API) utilizing the Spring framework and some sort of database connection all being written in Java - as a challenge to myself and to improve my programming skills.
 
 Once it is done, the service will be deployed to a server serving the [ksbrt.de](https://ksbrt.de) domain.
-
-# Requirements
-- C++17
-- cgicc (`libcgicc-dev` on Debian)
-- Apache httpd (or some other web+CGI server combination)
