@@ -1,4 +1,4 @@
-package eu.ksbrt.shortener.api;
+package eu.ksbrt.shortener.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,11 +16,6 @@ public class UserController {
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
-    }
-
-    @GetMapping
-    public String index() {
-        return "Hello World!";
     }
 
     @PostMapping
