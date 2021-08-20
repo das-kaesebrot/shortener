@@ -18,6 +18,11 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping
+    public String index() {
+        return "Hello World!";
+    }
+
     @PostMapping
     public void addUser(User user) {
         userService.addUser(user);
