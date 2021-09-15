@@ -1,18 +1,19 @@
 package eu.ksbrt.shortener.model;
 
-import java.util.UUID;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
 
+@Entity
 public class User {
-    private final UUID id;
-    private final String username;
+    @Id
+    @NotBlank
+    private String username;
+    @NotBlank
+    private String password;
 
-    public User(UUID id, String username) {
-        this.id = id;
+    public User(String username) {
         this.username = username;
-    }
-    
-    public UUID getUUID() {
-        return id;
     }
 
     public String getUsername() {
