@@ -1,0 +1,29 @@
+version: "2"
+
+services:
+  tomcat-test:
+    build: .
+    restart: always
+    # network_mode: host
+    ports: 
+      - 8080:8080
+      
+  db:
+    image: mariadb:10.3
+    # restart: always
+    ports:
+      - 3306:3306
+    # volumes:
+    #   - ./volumes/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin
+      - MYSQL_USER=dev
+      - MYSQL_PASSWORD=dev
+      - MYSQL_DATABASE=shortener
+
+  adminer:
+    image: adminer
+    depends_on:
+      - db
+    ports:
+      - 8000:8080
