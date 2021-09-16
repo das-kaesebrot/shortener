@@ -1,4 +1,4 @@
-package eu.ksbrt.shortener.link;
+package de.ksbrt.shortener.link;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
