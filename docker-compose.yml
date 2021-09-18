@@ -1,25 +1,18 @@
 version: "2"
 
-services:
-  tomcat-test:
-    build: .
-    restart: always
-    # network_mode: host
-    ports: 
-      - 8080:8080
-      
+services:      
   db:
     image: mariadb:10.3
-    # restart: always
+    restart: always
     ports:
       - 3306:3306
     # volumes:
-    #   - ./volumes/mysql:/var/lib/mysql
+    #   - ./docker-persistence/mysql:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=admin
       - MYSQL_USER=dev
-      - MYSQL_PASSWORD=dev
-      - MYSQL_DATABASE=shortener
+      - MYSQL_PASSWORD=dev123
+      - MYSQL_DATABASE=temp_db
 
   adminer:
     image: adminer
@@ -27,3 +20,23 @@ services:
       - db
     ports:
       - 8000:8080
+  
+  spring:
+    build: .
+    restart: always
+    depends_on:
+      - db
+    environment:
+      # required arguments
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://db:3306/temp_db
+      - SPRING_DATASOURCE_USERNAME=dev
+      - SPRING_DATASOURCE_PASSWORD=dev123
+      - SPRING_DATASOURCE_DRIVER-CLASS-NAME=org.mariadb.jdbc.Driver
+      # optional arguments
+      # - SERVER_PORT=8090
+      # - DEBUG=true
+      # - SPRING_THYMELEAF_CACHE=false
+      # - LOGGING_LEVEL_WEB=DEBUG
+    # network_mode: host
+    ports: 
+      - 8080:8080
