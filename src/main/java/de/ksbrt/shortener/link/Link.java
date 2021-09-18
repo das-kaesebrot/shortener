@@ -5,11 +5,14 @@ import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Version;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
+
+import de.ksbrt.shortener.security.ShortenerUser;
 
 @Entity
 public class Link {
@@ -32,12 +35,16 @@ public class Link {
     private String fullURI;
 
     @NotNull
-    private int hits;    
+    private int hits;
 
-    public Link(String shortURI, String fullURI) {
+    @ManyToOne
+    private ShortenerUser owner;
+
+    public Link(String shortURI, String fullURI, ShortenerUser owner) {
         // this.id = "";
         this.shortURI = shortURI;
         this.fullURI = fullURI;
+        this.owner = owner;
         this.hits = 0;
     }
     
@@ -79,5 +86,13 @@ public class Link {
 
     public void setHits(int hits) {
         this.hits = hits;
+    }
+    
+    public ShortenerUser getOwner() {
+        return owner;
+    }
+
+    public void setOwner(ShortenerUser owner) {
+        this.owner = owner;
     }
 }
