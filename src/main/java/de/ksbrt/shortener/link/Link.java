@@ -6,6 +6,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Version;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -17,15 +19,17 @@ public class Link {
     @Version
     private long Version;
     
-    @Id
 	@GenericGenerator(
 		name = "UUID",
 		strategy = "org.hibernate.id.UUIDGenerator"
 	)
-	@Column(name = "id", updatable = false, nullable = false)
-	private UUID Id;
-
+	@Column(name = "id", columnDefinition = "BINARY(16)", updatable = false, nullable = false)
+	private UUID Uuid;
+    
+    // TODO generate string here
+    @Id
     @NotBlank(message = "{notEmpty}")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private String ShortUri;
 
     @NotBlank(message = "{notEmpty}")
@@ -54,12 +58,8 @@ public class Link {
         Version = version;
     }
 
-    public UUID getId() {
-        return Id;
-    }
-
-    public void setId(UUID id) {
-        Id = id;
+    public UUID getUuid() {
+        return Uuid;
     }
 
     public String getShortURI() {
