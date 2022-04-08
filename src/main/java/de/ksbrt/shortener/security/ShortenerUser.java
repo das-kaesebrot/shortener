@@ -1,7 +1,5 @@
 package de.ksbrt.shortener.security;
-
 import java.util.Set;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
