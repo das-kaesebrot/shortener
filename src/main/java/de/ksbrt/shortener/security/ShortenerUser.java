@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,59 +16,62 @@ import de.ksbrt.shortener.link.Link;
 @Entity
 public class ShortenerUser {
 
+    /*
     @Autowired
+    @Transient
     private BCryptPasswordEncoder passwordEncoder;
+    */    
 
     @Id
     @NotBlank
-    private String username;
+    private String Username;
 
     @NotBlank
-    private String password;
+    private String Password;
 
     @NotBlank 
-    private String role;
+    private String Role;
 
-    @OneToMany(mappedBy="shorteneruser")
-    private Set<Link> links;
+    @OneToMany(mappedBy="Owner")
+    private Set<Link> Links;
 
     public ShortenerUser(@NotBlank String username, @NotBlank String rawPassword) {
-        this.username = username;
-        this.password = passwordEncoder.encode(rawPassword);
-        this.role = SecurityConfig.USER;
-        this.links = null;
+        Username = username;
+        Password = rawPassword;
+        Role = SecurityConfig.USER;
+        Links = null;
     }
 
     public String getUsername() {
-        return username;
+        return Username;
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        Username = username;
     }
 
     public String getPassword() {
-        return password;
+        return Password;
     }
 
     public void setPassword(String rawPassword) {
-        this.password = passwordEncoder.encode(rawPassword);
+        Password = rawPassword;
     }
 
     public Set<Link> getLinks() {
-        return links;
+        return Links;
     }
 
     public void setLinks(Set<Link> links) {
-        this.links = links;
+        Links = links;
     }
 
     public String getRole() {
-        return role;
+        return Role;
     }
 
     public void setRole(String role) {
-        this.role = role;
+        Role = role;
     }
     
 }

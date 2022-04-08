@@ -1,24 +1,21 @@
 package de.ksbrt.shortener.link;
-
+import de.ksbrt.shortener.security.ShortenerUser;
 import java.util.UUID;
-
 import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Version;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
 import org.hibernate.annotations.GenericGenerator;
-
-import de.ksbrt.shortener.security.ShortenerUser;
 
 @Entity
 public class Link {
 
     @Version
-    private long version;
+    private long Version;
     
     @Id
 	@GenericGenerator(
@@ -26,73 +23,78 @@ public class Link {
 		strategy = "org.hibernate.id.UUIDGenerator"
 	)
 	@Column(name = "id", updatable = false, nullable = false)
-	private UUID id;
+	private UUID Id;
 
     @NotBlank(message = "{notEmpty}")
-    private String shortURI;
+    private String ShortUri;
 
     @NotBlank(message = "{notEmpty}")
-    private String fullURI;
+    private String FullUri;
 
     @NotNull
-    private int hits;
+    private int Hits;
 
     @ManyToOne
-    private ShortenerUser owner;
+    @JoinColumn
+    (name = "OWNER_ID")
+    private ShortenerUser Owner;
 
-    public Link(String shortURI, String fullURI, ShortenerUser owner) {
-        // this.id = "";
-        this.shortURI = shortURI;
-        this.fullURI = fullURI;
-        this.owner = owner;
-        this.hits = 0;
+    public Link(String shortUri, String fullUri, ShortenerUser owner) {
+        ShortUri = shortUri;
+        FullUri = fullUri;
+        Owner = owner;
+        Hits = 0;
     }
     
     public long getVersion() {
-        return version;
+        return Version;
     }
 
     public void setVersion(long version) {
-        this.version = version;
+        Version = version;
     }
 
     public UUID getId() {
-        return id;
+        return Id;
     }
 
     public void setId(UUID id) {
-        this.id = id;
+        Id = id;
     }
 
     public String getShortURI() {
-        return shortURI;
+        return ShortUri;
     }
 
-    public void setShortURI(String shortURI) {
-        this.shortURI = shortURI;
+    public void setShortURI(String shortUri) {
+        ShortUri = shortUri;
     }
 
     public String getFullURI() {
-        return fullURI;
+        return FullUri;
     }
 
-    public void setFullURI(String fullURI) {
-        this.fullURI = fullURI;
+    public void setFullURI(String fullUri) {
+        FullUri = fullUri;
     }
 
     public int getHits() {
-        return hits;
+        return Hits;
     }
 
     public void setHits(int hits) {
-        this.hits = hits;
+        Hits = hits;
     }
     
     public ShortenerUser getOwner() {
-        return owner;
+        return Owner;
     }
 
     public void setOwner(ShortenerUser owner) {
-        this.owner = owner;
+        Owner = owner;
+    }
+
+    public void incrementHits() {
+        Hits++;
     }
 }
