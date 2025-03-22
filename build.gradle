@@ -1,18 +1,24 @@
 plugins {
 	id 'java'
+	id 'application'
 	id 'org.springframework.boot' version '3.3.5'
 	id 'io.spring.dependency-management' version '1.1.6'
 }
 
 group = 'eu.kaesebrot.dev'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '21'
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
 
 repositories {
 	mavenCentral()
 	maven {
         url "https://jitpack.io"
     }
+}
+
+application {
+    mainClass = 'eu.kaesebrot.dev.shortener.ShortenerApplication'
 }
 
 dependencies {
@@ -33,4 +39,3 @@ dependencies {
 test {
 	useJUnitPlatform()
 }
-targetCompatibility = JavaVersion.VERSION_21
