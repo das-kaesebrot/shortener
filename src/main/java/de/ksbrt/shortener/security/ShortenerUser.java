@@ -36,7 +36,6 @@ public class ShortenerUser {
     public ShortenerUser(@NotBlank String username, @NotBlank String rawPassword) {
         Username = username;
         Password = rawPassword;
-        Role = SecurityConfig.USER;
         Links = null;
     }
 
