@@ -1,10 +1,12 @@
 package eu.kaesebrot.dev.shortener.link;
+import java.sql.Timestamp;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import eu.kaesebrot.dev.shortener.security.ShortenerUser;
-import java.util.UUID;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 public class Link {
@@ -13,32 +15,38 @@ public class Link {
     private long Version;
 
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid4")
-	private UUID Id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false, nullable = false)
+    private Long id;
 
-    @NotBlank(message = "{notEmpty}")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String ShortUri;
-
-    @NotBlank(message = "{notEmpty}")
-    private String FullUri;
+    private String shortUri;
+    private String fullUri;
 
     @NotNull
-    private int Hits;
+    private int hits;
 
     @ManyToOne
     @JoinColumn
-    (name = "OWNER_ID")
-    private ShortenerUser Owner;
+    (name = "owner_id")
+    private ShortenerUser owner;
 
-    public Link() {}
+    @CreationTimestamp
+    @Column(nullable = false)
+    private Timestamp createdAt;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private Timestamp modifiedAt;
+
+    public Link() {
+        this.hits = 0;
+    }
 
     public Link(String shortUri, String fullUri, ShortenerUser owner) {
-        ShortUri = shortUri;
-        FullUri = fullUri;
-        Owner = owner;
-        Hits = 0;
+        this();
+        this.shortUri = shortUri;
+        this.fullUri = fullUri;
+        this.owner = owner;
     }
     
     public long getVersion() {
@@ -49,39 +57,47 @@ public class Link {
         Version = version;
     }
 
-    public UUID getId() {
-        return Id;
+    public Long getId() {
+        return id;
     }
 
     public String getShortURI() {
-        return ShortUri;
+        return shortUri;
     }
 
     public void setShortURI(String shortUri) {
-        ShortUri = shortUri;
+        this.shortUri = shortUri;
     }
 
     public String getFullURI() {
-        return FullUri;
+        return fullUri;
     }
 
     public void setFullURI(String fullUri) {
-        FullUri = fullUri;
+        this.fullUri = fullUri;
     }
 
     public int getHits() {
-        return Hits;
+        return hits;
     }
 
     public ShortenerUser getOwner() {
-        return Owner;
+        return owner;
     }
 
     public void setOwner(ShortenerUser owner) {
-        Owner = owner;
+        this.owner = owner;
     }
 
     public void incrementHits() {
-        Hits++;
+        hits++;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public Timestamp getModifiedAt() {
+        return modifiedAt;
     }
 }
