@@ -11,16 +11,12 @@ public class Link {
 
     @Version
     private long Version;
-    
-	@GenericGenerator(
-		name = "UUID",
-		strategy = "org.hibernate.id.UUIDGenerator"
-	)
-	@Column(name = "id", columnDefinition = "BINARY(16)", updatable = false, nullable = false)
-	private UUID Uuid;
-    
-    // TODO generate string here
+
     @Id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid4")
+	private UUID Id;
+
     @NotBlank(message = "{notEmpty}")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String ShortUri;
@@ -53,8 +49,8 @@ public class Link {
         Version = version;
     }
 
-    public UUID getUuid() {
-        return Uuid;
+    public UUID getId() {
+        return Id;
     }
 
     public String getShortURI() {
@@ -77,10 +73,6 @@ public class Link {
         return Hits;
     }
 
-    public void setHits(int hits) {
-        Hits = hits;
-    }
-    
     public ShortenerUser getOwner() {
         return Owner;
     }
