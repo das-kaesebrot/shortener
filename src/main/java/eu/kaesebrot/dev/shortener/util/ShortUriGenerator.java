@@ -1,5 +1,5 @@
 package eu.kaesebrot.dev.shortener.util;
 
-public interface IShortUriGenerator {
+public interface ShortUriGenerator {
     public String generate(int length);
 }
