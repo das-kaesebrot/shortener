@@ -1,4 +1,4 @@
-package de.ksbrt.shortener.link;
+package eu.kaesebrot.dev.shortener.link;
 import java.util.Set;
 import java.util.HashSet;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +22,16 @@ public class LinkController {
         return new HashSet<>(_linkRepository.findAll());
     }
     // end::get-aggregate-root[]
+
+    @PostMapping("/links")
+    Link createSingleLink(@RequestBody RequestBody requestBody) {
+        _linkRepository.save(
+                new Link(
+                        null, null, null
+                )
+        );
+        return null;
+    }
 
     @GetMapping("/links/{id}")
     Link getSingleLink(@PathVariable String id) {

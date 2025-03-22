@@ -1,4 +1,4 @@
-package de.ksbrt.shortener.link;
+package eu.kaesebrot.dev.shortener.link;
 
 public class LinkNotFoundException extends RuntimeException {
     LinkNotFoundException(String id) {

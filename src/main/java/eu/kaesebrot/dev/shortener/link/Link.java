@@ -1,5 +1,5 @@
-package de.ksbrt.shortener.link;
-import de.ksbrt.shortener.security.ShortenerUser;
+package eu.kaesebrot.dev.shortener.link;
+import eu.kaesebrot.dev.shortener.security.ShortenerUser;
 import java.util.UUID;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

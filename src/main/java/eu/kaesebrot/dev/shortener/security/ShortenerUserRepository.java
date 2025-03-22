@@ -1,4 +1,4 @@
-package de.ksbrt.shortener.security;
+package eu.kaesebrot.dev.shortener.security;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
