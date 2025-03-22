@@ -35,6 +35,8 @@ public class ShortenerUser {
         Links = null;
     }
 
+    public ShortenerUser() {}
+
     public String getUsername() {
         return Username;
     }
