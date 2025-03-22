@@ -43,6 +43,8 @@ public class Link {
     (name = "OWNER_ID")
     private ShortenerUser Owner;
 
+    public Link() {}
+
     public Link(String shortUri, String fullUri, ShortenerUser owner) {
         ShortUri = shortUri;
         FullUri = fullUri;
