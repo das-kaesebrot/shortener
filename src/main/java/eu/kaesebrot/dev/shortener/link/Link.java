@@ -1,4 +1,5 @@
 package eu.kaesebrot.dev.shortener.link;
+import java.net.URI;
 import java.sql.Timestamp;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -20,7 +21,7 @@ public class Link {
     private Long id;
 
     private String shortUri;
-    private String fullUri;
+    private URI fullUri;
 
     @NotNull
     private int hits;
@@ -42,11 +43,15 @@ public class Link {
         this.hits = 0;
     }
 
-    public Link(String shortUri, String fullUri, ShortenerUser owner) {
+    public Link(String shortUri, URI fullUri, ShortenerUser owner) {
         this();
         this.shortUri = shortUri;
         this.fullUri = fullUri;
         this.owner = owner;
+    }
+
+    public Link(String shortUri, String fullUri, ShortenerUser owner) {
+        this(shortUri, URI.create(fullUri), owner);
     }
     
     public long getVersion() {
@@ -69,12 +74,16 @@ public class Link {
         this.shortUri = shortUri;
     }
 
-    public String getFullURI() {
+    public URI getFullURI() {
         return fullUri;
     }
 
-    public void setFullURI(String fullUri) {
+    public void setFullURI(URI fullUri) {
         this.fullUri = fullUri;
+    }
+
+    public void setFullURI(String fullUri) {
+        this.fullUri = URI.create(fullUri);
     }
 
     public int getHits() {
