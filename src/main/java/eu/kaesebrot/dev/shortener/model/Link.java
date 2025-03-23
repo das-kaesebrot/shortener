@@ -1,4 +1,4 @@
-package eu.kaesebrot.dev.shortener.link;
+package eu.kaesebrot.dev.shortener.model;
 import java.net.URI;
 import java.sql.Timestamp;
 
@@ -11,7 +11,6 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Link {
-
     @Version
     private long Version;
 
@@ -21,6 +20,7 @@ public class Link {
     private Long id;
 
     private String shortUri;
+
     private URI fullUri;
 
     @NotNull
