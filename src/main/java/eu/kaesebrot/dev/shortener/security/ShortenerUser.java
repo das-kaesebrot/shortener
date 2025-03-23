@@ -1,72 +1,73 @@
 package eu.kaesebrot.dev.shortener.security;
+import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Set;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+
+import eu.kaesebrot.dev.shortener.model.Link;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
-import eu.kaesebrot.dev.shortener.link.Link;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 public class ShortenerUser {
-
-    /*
-    @Autowired
-    @Transient
-    private BCryptPasswordEncoder passwordEncoder;
-    */    
+    @Version
+    private long version;
 
     @Id
-    @NotBlank
-    private String Username;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false, nullable = false)
+    private Long id;
 
     @NotBlank
-    private String Password;
+    private String username;
 
-    @NotBlank 
-    private String Role;
+    @NotBlank
+    private String passwordHash;
 
-    @OneToMany(mappedBy="Owner")
-    private Set<Link> Links;
+    @OneToMany(mappedBy="owner")
+    private Set<Link> links;
 
-    public ShortenerUser(@NotBlank String username, @NotBlank String rawPassword) {
-        Username = username;
-        Password = rawPassword;
-        Links = null;
+    @CreationTimestamp
+    @Column(nullable = false)
+    private Timestamp createdAt;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private Timestamp modifiedAt;
+
+    public ShortenerUser(@NotBlank String username, @NotBlank String passwordHash) {
+        this();
+        this.username = username;
+        this.passwordHash = passwordHash;
     }
 
-    public ShortenerUser() {}
+    public ShortenerUser() {
+        this.links = new HashSet<>();
+    }
 
     public String getUsername() {
-        return Username;
+        return username;
     }
 
     public void setUsername(String username) {
-        Username = username;
+        this.username = username;
     }
 
-    public String getPassword() {
-        return Password;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setPassword(String rawPassword) {
-        Password = rawPassword;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     public Set<Link> getLinks() {
-        return Links;
+        return links;
     }
 
     public void setLinks(Set<Link> links) {
-        Links = links;
+        this.links = links;
     }
-
-    public String getRole() {
-        return Role;
-    }
-
-    public void setRole(String role) {
-        Role = role;
-    }
-    
 }
