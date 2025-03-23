@@ -1,4 +1,4 @@
-package eu.kaesebrot.dev.shortener.security;
+package eu.kaesebrot.dev.shortener.repository;
 
 import eu.kaesebrot.dev.shortener.model.ShortenerUser;
 import org.springframework.data.jpa.repository.JpaRepository;

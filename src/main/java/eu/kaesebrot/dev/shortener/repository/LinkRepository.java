@@ -1,4 +1,4 @@
-package eu.kaesebrot.dev.shortener.service;
+package eu.kaesebrot.dev.shortener.repository;
 
 import eu.kaesebrot.dev.shortener.model.Link;
 import org.springframework.data.jpa.repository.JpaRepository;

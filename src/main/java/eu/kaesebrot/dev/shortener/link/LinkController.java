@@ -6,7 +6,7 @@ import java.util.HashSet;
 import eu.kaesebrot.dev.shortener.exceptions.LinkNotFoundException;
 import eu.kaesebrot.dev.shortener.model.Link;
 import eu.kaesebrot.dev.shortener.model.LinkCreation;
-import eu.kaesebrot.dev.shortener.service.LinkRepository;
+import eu.kaesebrot.dev.shortener.repository.LinkRepository;
 import eu.kaesebrot.dev.shortener.util.ShortUriGenerator;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
