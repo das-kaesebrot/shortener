@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ShortUriGeneratorImpl implements ShortUriGenerator {
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final SecureRandom secureRandom = new SecureRandom();
 
     // this is terrible
