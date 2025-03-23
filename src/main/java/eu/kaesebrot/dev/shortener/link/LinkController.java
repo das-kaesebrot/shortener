@@ -9,8 +9,8 @@ import eu.kaesebrot.dev.shortener.model.LinkCreation;
 import eu.kaesebrot.dev.shortener.repository.LinkRepository;
 import eu.kaesebrot.dev.shortener.util.ShortUriGenerator;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 @RequestMapping("/api/v1/shortener")
@@ -48,10 +48,10 @@ public class LinkController {
         return _linkRepository.findById(id).orElseThrow(() -> new LinkNotFoundException(id));
     }
 
-    @GetMapping("/redirect/{shortUri}")
-    void redirectShortUri(HttpServletResponse response, @PathVariable String shortUri) throws IOException {
+    @GetMapping("redirect/{shortUri}")
+    RedirectView redirectShortUri(@PathVariable String shortUri) throws IOException {
         var link = _linkRepository.findByShortUri(shortUri).orElseThrow();
 
-        response.sendRedirect(link.getFullURI().toString());
+        return new RedirectView(link.getFullURI().toString());
     }
 }
