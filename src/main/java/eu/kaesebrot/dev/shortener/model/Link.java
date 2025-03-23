@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import eu.kaesebrot.dev.shortener.security.ShortenerUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 

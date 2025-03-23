@@ -1,9 +1,8 @@
-package eu.kaesebrot.dev.shortener.security;
+package eu.kaesebrot.dev.shortener.model;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-import eu.kaesebrot.dev.shortener.model.Link;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
