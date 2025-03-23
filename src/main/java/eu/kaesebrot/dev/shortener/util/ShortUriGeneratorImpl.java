@@ -15,9 +15,6 @@ public class ShortUriGeneratorImpl implements ShortUriGenerator {
     public String generate(int length) {
         var seed = secureRandom.generateSeed(secureRandom.nextInt(24, 32));
         var rawKey = HexFormat.of().formatHex(seed);
-
-        var hashedKey = passwordEncoder.encode(rawKey);
-
-        return hashedKey.substring(0, length);
+        return rawKey.substring(0, length);
     }
 }
