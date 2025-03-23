@@ -1,4 +1,4 @@
-package eu.ksbrt.shortener;
+package eu.kaesebrot.dev.shortener;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
