@@ -3,9 +3,9 @@ package eu.kaesebrot.dev.shortener.util;
 import java.security.SecureRandom;
 import java.util.HexFormat;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ShortUriGeneratorImpl implements ShortUriGenerator {
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final SecureRandom secureRandom = new SecureRandom();
