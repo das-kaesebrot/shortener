@@ -1,4 +1,4 @@
-package eu.kaesebrot.dev.shortener.util;
+package eu.kaesebrot.dev.shortener.utils;
 
 import java.security.SecureRandom;
 import java.util.HexFormat;

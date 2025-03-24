@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import eu.kaesebrot.dev.shortener.util.ShortUriGenerator;
+import eu.kaesebrot.dev.shortener.utils.ShortUriGenerator;
 
 @SpringBootTest
 class ShortenerApplicationTests {

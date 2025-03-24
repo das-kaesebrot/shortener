@@ -8,7 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import eu.kaesebrot.dev.shortener.util.StringUtils;
+import eu.kaesebrot.dev.shortener.utils.StringUtils;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 

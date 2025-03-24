@@ -1,4 +1,4 @@
-package eu.kaesebrot.dev.shortener.util;
+package eu.kaesebrot.dev.shortener.utils;
 
 public final class StringUtils {
     private StringUtils() {}

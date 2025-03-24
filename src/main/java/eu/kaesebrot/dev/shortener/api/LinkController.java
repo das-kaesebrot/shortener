@@ -7,8 +7,8 @@ import eu.kaesebrot.dev.shortener.exceptions.LinkNotFoundException;
 import eu.kaesebrot.dev.shortener.model.Link;
 import eu.kaesebrot.dev.shortener.model.LinkCreation;
 import eu.kaesebrot.dev.shortener.repository.LinkRepository;
-import eu.kaesebrot.dev.shortener.util.ShortUriGenerator;
-import eu.kaesebrot.dev.shortener.util.StringUtils;
+import eu.kaesebrot.dev.shortener.utils.ShortUriGenerator;
+import eu.kaesebrot.dev.shortener.utils.StringUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.http.HttpStatus;
