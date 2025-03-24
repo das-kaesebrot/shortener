@@ -12,7 +12,7 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 public class Link {
     @Version
-    private long Version;
+    private long version;
 
     @Id
     @Column(updatable = false, nullable = false)
@@ -53,11 +53,11 @@ public class Link {
     }
     
     public long getVersion() {
-        return Version;
+        return version;
     }
 
     public void setVersion(long version) {
-        Version = version;
+        this.version = version;
     }
 
     public String getId() {
