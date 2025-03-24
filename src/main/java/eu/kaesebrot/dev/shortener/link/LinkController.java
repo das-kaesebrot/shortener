@@ -10,6 +10,8 @@ import eu.kaesebrot.dev.shortener.repository.LinkRepository;
 import eu.kaesebrot.dev.shortener.util.ShortUriGenerator;
 import eu.kaesebrot.dev.shortener.util.StringUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -54,10 +56,14 @@ public class LinkController {
         return _linkRepository.findById(id).orElseThrow(() -> new LinkNotFoundException(id));
     }
 
-    @GetMapping("redirect/{shortUri}")
-    RedirectView redirectShortUri(@PathVariable String shortUri) throws IOException {
-        var link = _linkRepository.findByShortUri(shortUri).orElseThrow();
+    @DeleteMapping("links/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void deleteLink(@PathVariable String id) {
+        if (!_linkRepository.existsById(id)) {
+            throw new LinkNotFoundException(id);
+        }
 
-        return new RedirectView(link.getFullURI().toString());
+        _linkRepository.deleteById(id);
+    }
     }
 }
