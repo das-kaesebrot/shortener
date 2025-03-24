@@ -44,7 +44,7 @@ public class LinkController {
     }
 
     @GetMapping("links/{id}")
-    Link getSingleLink(@PathVariable Long id) {
+    Link getSingleLink(@PathVariable String id) {
         return _linkRepository.findById(id).orElseThrow(() -> new LinkNotFoundException(id));
     }
 

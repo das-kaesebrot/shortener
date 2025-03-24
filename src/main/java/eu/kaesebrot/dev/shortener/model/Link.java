@@ -14,9 +14,8 @@ public class Link {
     private long Version;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
-    private Long id;
+    private String id;
 
     private String shortUri;
 
@@ -61,7 +60,7 @@ public class Link {
         Version = version;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
