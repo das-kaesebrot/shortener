@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -17,9 +18,8 @@ public class Link {
     @Column(updatable = false, nullable = false)
     private String id;
 
-    private String shortUri;
-
-    private URI fullUri;
+    @JsonProperty("redirect_uri")
+    private URI redirectUri;
 
     @NotNull
     private int hits;
@@ -41,15 +41,15 @@ public class Link {
         this.hits = 0;
     }
 
-    public Link(String shortUri, URI fullUri, ShortenerUser owner) {
+    public Link(String shortUri, URI redirectUri, ShortenerUser owner) {
         this();
-        this.shortUri = shortUri;
-        this.fullUri = fullUri;
+        this.id = shortUri;
+        this.redirectUri = redirectUri;
         this.owner = owner;
     }
 
-    public Link(String shortUri, String fullUri, ShortenerUser owner) {
-        this(shortUri, URI.create(fullUri), owner);
+    public Link(String shortUri, String redirectUri, ShortenerUser owner) {
+        this(shortUri, URI.create(redirectUri), owner);
     }
     
     public long getVersion() {
@@ -64,24 +64,16 @@ public class Link {
         return id;
     }
 
-    public String getShortURI() {
-        return shortUri;
+    public URI getRedirectUri() {
+        return redirectUri;
     }
 
-    public void setShortURI(String shortUri) {
-        this.shortUri = shortUri;
+    public void setRedirectUri(URI redirectUri) {
+        this.redirectUri = redirectUri;
     }
 
-    public URI getFullURI() {
-        return fullUri;
-    }
-
-    public void setFullURI(URI fullUri) {
-        this.fullUri = fullUri;
-    }
-
-    public void setFullURI(String fullUri) {
-        this.fullUri = URI.create(fullUri);
+    public void setRedirectUri(String redirectUri) {
+        this.setRedirectUri(URI.create(redirectUri));
     }
 
     public int getHits() {
