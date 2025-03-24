@@ -31,10 +31,12 @@ public class Link {
 
     @CreationTimestamp
     @Column(nullable = false)
+    @JsonProperty("created_at")
     private Timestamp createdAt;
 
     @UpdateTimestamp
     @Column(nullable = false)
+    @JsonProperty("modified_at")
     private Timestamp modifiedAt;
 
     public Link() {
