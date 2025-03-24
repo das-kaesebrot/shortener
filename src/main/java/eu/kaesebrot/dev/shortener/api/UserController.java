@@ -37,11 +37,10 @@ public class UserController {
         }
 
         ShortenerUser user = new ShortenerUser(userCreation.getUsername(), _passwordEncoder.encode(userCreation.getRawPassword()), userCreation.getEmail());
-        user.addState(UserState.CONFIRMING_EMAIL);
-        _userRepository.save(user);
-
         // TODO send out token link via mail
         String rawToken = _confirmationTokenService.generateConfirmationTokenForUser(user);
+        user.updateHashedConfirmationToken(_passwordEncoder.encode(rawToken));
+        _userRepository.save(user);
 
         return user;
     }
@@ -53,9 +52,6 @@ public class UserController {
 
     @GetMapping("confirm/{rawToken}")
     void confirmUserAccount(@PathVariable String rawToken) {
-        ShortenerUser associatedUser = _confirmationTokenService.redeemToken(rawToken);
-        associatedUser = _userRepository.findById(associatedUser.getId()).orElseThrow();
-        associatedUser.removeState(UserState.CONFIRMING_EMAIL);
-        _userRepository.save(associatedUser);
+        _confirmationTokenService.redeemToken(rawToken);
     }
 }

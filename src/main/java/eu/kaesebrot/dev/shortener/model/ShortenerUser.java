@@ -45,9 +45,8 @@ public class ShortenerUser implements Serializable {
     @Enumerated(EnumType.STRING)
     private Set<UserState> userState;
 
-    @OneToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "confirmationtoken_id")
-    private EmailConfirmationToken emailConfirmationToken;
+    @Column(nullable = true)
+    private String hashedConfirmationToken;
 
     @CreationTimestamp
     @Column(nullable = false)
@@ -139,5 +138,23 @@ public class ShortenerUser implements Serializable {
 
     public Timestamp getModifiedAt() {
         return modifiedAt;
+    }
+
+    public String getHashedConfirmationToken() {
+        return hashedConfirmationToken;
+    }
+
+    public void updateHashedConfirmationToken(String hashedConfirmationToken) {
+        if (this.hashedConfirmationToken == hashedConfirmationToken) {
+            return;
+        }
+
+        addState(UserState.CONFIRMING_EMAIL);
+        this.hashedConfirmationToken = hashedConfirmationToken;
+    }
+
+    public void setEmailVerified() {
+        this.hashedConfirmationToken = null;
+        removeState(UserState.CONFIRMING_EMAIL);
     }
 }
