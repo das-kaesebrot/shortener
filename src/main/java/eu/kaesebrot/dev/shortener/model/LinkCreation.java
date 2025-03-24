@@ -7,14 +7,15 @@ import java.io.Serializable;
 
 public class LinkCreation implements Serializable {
     @NotNull
-    @JsonProperty("url")
-    private String url;
+    @JsonProperty("redirect_uri")
+    private String redirectUri;
 
-    public String getUrl() {
-        return url;
+    public String getRedirectUri() {
+        return redirectUri;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setRedirectUri(String redirectUri) {
+        this.redirectUri = redirectUri;
+    }
     }
 }
