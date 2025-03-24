@@ -8,6 +8,7 @@ import eu.kaesebrot.dev.shortener.model.Link;
 import eu.kaesebrot.dev.shortener.model.LinkCreation;
 import eu.kaesebrot.dev.shortener.repository.LinkRepository;
 import eu.kaesebrot.dev.shortener.util.ShortUriGenerator;
+import eu.kaesebrot.dev.shortener.util.StringUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
@@ -30,13 +31,18 @@ public class LinkController {
     }
 
     @PostMapping("links")
-    Link createSingleLink(LinkCreation linkCreation) {
-        String generatedUri = null;
-        do {
-            generatedUri = _shortUriGenerator.generate(5);
-        } while (_linkRepository.existsByShortUri(generatedUri));
+    Link createSingleLink(@RequestBody LinkCreation linkCreation) {
+        String linkId = linkCreation.getId();
 
-        Link link = new Link(generatedUri, linkCreation.getUrl(), null);
+        if (StringUtils.isNullOrEmpty(linkId)) {
+            do {
+                linkId = _shortUriGenerator.generate(5);
+            } while (_linkRepository.existsById(linkId));
+        } else if (_linkRepository.existsById(linkId)) {
+            throw new IllegalArgumentException(String.format("Link with id %s already exists!", linkId));
+        }
+
+        Link link = new Link(linkId, linkCreation.getRedirectUri(), null);
 
         _linkRepository.save(link);
 
