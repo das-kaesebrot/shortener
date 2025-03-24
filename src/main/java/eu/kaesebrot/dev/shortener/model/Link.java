@@ -6,6 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import eu.kaesebrot.dev.shortener.util.StringUtils;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -46,6 +48,11 @@ public class Link {
     public Link(String shortUri, URI redirectUri, ShortenerUser owner) {
         this();
         this.id = shortUri;
+        if (StringUtils.isNullOrEmpty(redirectUri.getScheme())) {
+            String redirectUriStr = redirectUri.toString();
+            redirectUriStr = String.format("%s://%s", "https", redirectUriStr);
+            redirectUri = URI.create(redirectUriStr);
+        }
         this.redirectUri = redirectUri;
         this.owner = owner;
     }
