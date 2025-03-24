@@ -13,6 +13,7 @@ import eu.kaesebrot.dev.shortener.model.UserCreation;
 import eu.kaesebrot.dev.shortener.repository.ShortenerUserRepository;
 import eu.kaesebrot.dev.shortener.service.EmailConfirmationTokenService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -29,7 +30,7 @@ public class UserController {
     }
 
     @PostMapping
-    ShortenerUser registerUser(@RequestBody UserCreation userCreation) {
+    ShortenerUser registerUser(@Valid @RequestBody UserCreation userCreation) {
 
         if (_userRepository.existsByEmail(userCreation.getEmail()) || _userRepository.existsByUsername(userCreation.getUsername())) {
             throw new IllegalArgumentException("User already exists!");

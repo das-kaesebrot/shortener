@@ -10,6 +10,7 @@ import eu.kaesebrot.dev.shortener.repository.LinkRepository;
 import eu.kaesebrot.dev.shortener.utils.HexStringGenerator;
 import eu.kaesebrot.dev.shortener.utils.StringUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +34,7 @@ public class LinkController {
     }
 
     @PostMapping
-    Link createSingleLink(@RequestBody LinkCreation linkCreation) {
+    Link createSingleLink(@Valid @RequestBody LinkCreation linkCreation) {
         String linkId = linkCreation.getId();
 
         if (StringUtils.isNullOrEmpty(linkId)) {
