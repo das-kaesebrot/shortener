@@ -1,4 +1,5 @@
 package eu.kaesebrot.dev.shortener.model;
+import java.io.Serializable;
 import java.net.URI;
 import java.sql.Timestamp;
 
@@ -12,7 +13,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-public class Link {
+public class Link implements Serializable {
     @Version
     private long version;
 

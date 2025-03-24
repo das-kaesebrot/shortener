@@ -1,4 +1,5 @@
 package eu.kaesebrot.dev.shortener.model;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,7 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
-public class ShortenerUser {
+public class ShortenerUser implements Serializable {
     @Version
     private long version;
 
