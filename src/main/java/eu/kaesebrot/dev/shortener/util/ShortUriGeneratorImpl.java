@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 public class ShortUriGeneratorImpl implements ShortUriGenerator {
     private final SecureRandom secureRandom = new SecureRandom();
 
-    // this is terrible
     @Override
     public String generate(int length) {
-        var seed = secureRandom.generateSeed(secureRandom.nextInt(24, 32));
-        var rawKey = HexFormat.of().formatHex(seed);
-        return rawKey.substring(0, length);
+        // generate bytes in half the amount of the requested length (rounded up) since 2 hex chars are 1 byte
+        byte[] seed = secureRandom.generateSeed((int) Math.ceil(length / 2D));
+        String hexString = HexFormat.of().formatHex(seed);
+        return hexString.substring(0, length);
     }
 }
