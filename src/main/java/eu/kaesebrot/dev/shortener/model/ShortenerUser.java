@@ -27,6 +27,11 @@ public class ShortenerUser implements Serializable {
     @NotBlank
     private String passwordHash;
 
+    @NotBlank
+    @Email
+    @Column(unique=true)
+    private String email;
+
     @OneToMany(mappedBy="owner")
     private Set<Link> links;
 
@@ -38,10 +43,11 @@ public class ShortenerUser implements Serializable {
     @Column(nullable = false)
     private Timestamp modifiedAt;
 
-    public ShortenerUser(@NotBlank String username, @NotBlank String passwordHash) {
+    public ShortenerUser(@NotBlank String username, @NotBlank String passwordHash, String email) {
         this();
         this.username = username;
         this.passwordHash = passwordHash;
+        this.email = email;
     }
 
     public ShortenerUser() {
@@ -62,6 +68,14 @@ public class ShortenerUser implements Serializable {
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void updateEmail(String email) {
+        this.email = email;
     }
 
     public Set<Link> getLinks() {
