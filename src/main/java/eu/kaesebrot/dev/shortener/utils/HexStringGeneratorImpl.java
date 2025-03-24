@@ -16,4 +16,11 @@ public class HexStringGeneratorImpl implements HexStringGenerator {
         String hexString = HexFormat.of().formatHex(seed);
         return hexString.substring(0, length);
     }
+
+    @Override
+    public String generateToken() {
+        // generate 32 Byte -> 64 hex chars
+        byte[] seed = secureRandom.generateSeed(32);
+        return HexFormat.of().formatHex(seed);
+    }
 }
