@@ -45,6 +45,10 @@ public class ShortenerUser implements Serializable {
     @Enumerated(EnumType.STRING)
     private Set<UserState> userState;
 
+    @OneToOne(cascade = {CascadeType.ALL})
+    @JoinColumn(name = "confirmationtoken_id")
+    private EmailConfirmationToken emailConfirmationToken;
+
     @CreationTimestamp
     @Column(nullable = false)
     private Timestamp createdAt;
