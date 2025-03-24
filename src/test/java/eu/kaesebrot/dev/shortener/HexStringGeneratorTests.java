@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import eu.kaesebrot.dev.shortener.utils.HexStringGenerator;
 
 @SpringBootTest
-class ShortenerApplicationTests {
+class HexStringGeneratorTests {
     @Autowired
     private HexStringGenerator hexStringGenerator;
 
