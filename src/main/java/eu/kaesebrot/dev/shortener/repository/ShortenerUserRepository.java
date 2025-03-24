@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ShortenerUserRepository extends JpaRepository<ShortenerUser, Long> {
-    
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
 }
