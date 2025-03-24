@@ -1,14 +1,19 @@
 package eu.kaesebrot.dev.shortener.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import eu.kaesebrot.dev.shortener.enums.UserState;
 
 @Entity
 public class ShortenerUser implements Serializable {
@@ -34,6 +39,11 @@ public class ShortenerUser implements Serializable {
 
     @OneToMany(mappedBy="owner")
     private Set<Link> links;
+    
+    @ElementCollection(targetClass = UserState.class)
+    @CollectionTable
+    @Enumerated(EnumType.STRING)
+    private Set<UserState> userState;
 
     @CreationTimestamp
     @Column(nullable = false)
@@ -52,6 +62,7 @@ public class ShortenerUser implements Serializable {
 
     public ShortenerUser() {
         this.links = new HashSet<>();
+        this.userState = Collections.synchronizedSet(EnumSet.noneOf(UserState.class));
     }
 
     public String getUsername() {
@@ -84,5 +95,29 @@ public class ShortenerUser implements Serializable {
 
     public void setLinks(Set<Link> links) {
         this.links = links;
+    }
+
+    public void setState(EnumSet<UserState> userStateSet) {
+        this.userState = userStateSet;
+    }
+    
+    public void addState(UserState userState) {
+        this.userState.add(userState);
+    }
+
+    public void removeState(UserState userState) {
+        this.userState.remove(userState);
+    }
+
+    public void clearState() {
+        this.setState(EnumSet.noneOf(UserState.class));
+    }
+
+    public Set<UserState> getState() {
+        return userState;
+    }
+    
+    public boolean hasState(UserState state) {
+        return userState.contains(state);
     }
 }
