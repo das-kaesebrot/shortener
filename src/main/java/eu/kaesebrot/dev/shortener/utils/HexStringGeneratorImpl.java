@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class HexStringGeneratorImpl implements HexStringGenerator {
     private final SecureRandom secureRandom = new SecureRandom();
+    
+    private final int TOKEN_BYTES = 32;
 
     @Override
     public String generate(int length) {
@@ -20,7 +22,7 @@ public class HexStringGeneratorImpl implements HexStringGenerator {
     @Override
     public String generateToken() {
         // generate 32 Byte -> 64 hex chars
-        byte[] seed = secureRandom.generateSeed(32);
+        byte[] seed = secureRandom.generateSeed(TOKEN_BYTES);
         return HexFormat.of().formatHex(seed);
     }
 }
