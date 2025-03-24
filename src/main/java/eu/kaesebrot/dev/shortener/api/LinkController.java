@@ -67,6 +67,7 @@ public class LinkController {
     }
 
     @GetMapping("redirect/{id}")
+    @ResponseStatus(HttpStatus.FOUND)
     RedirectView redirectShortUri(@PathVariable String id) throws IOException {
         var link = _linkRepository.findById(id).orElseThrow();
         link.incrementHits();
