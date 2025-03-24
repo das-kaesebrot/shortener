@@ -11,17 +11,21 @@ import eu.kaesebrot.dev.shortener.enums.UserState;
 import eu.kaesebrot.dev.shortener.model.ShortenerUser;
 import eu.kaesebrot.dev.shortener.model.UserCreation;
 import eu.kaesebrot.dev.shortener.repository.ShortenerUserRepository;
+import eu.kaesebrot.dev.shortener.service.EmailConfirmationTokenService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 
 @RestController
 @RequestMapping("/api/v1/shortener/users")
 @Tag(name = "users", description = "The User API")
 public class UserController {
     private final ShortenerUserRepository _userRepository;
+    private final EmailConfirmationTokenService _confirmationTokenService;
     private final BCryptPasswordEncoder _passwordEncoder = new BCryptPasswordEncoder();
     
-    UserController(ShortenerUserRepository repository) {
+    UserController(ShortenerUserRepository repository, EmailConfirmationTokenService confirmationTokenService) {
         _userRepository = repository;
+        _confirmationTokenService = confirmationTokenService;
     }
 
     @PostMapping
@@ -33,8 +37,10 @@ public class UserController {
 
         ShortenerUser user = new ShortenerUser(userCreation.getUsername(), _passwordEncoder.encode(userCreation.getRawPassword()), userCreation.getEmail());
         user.addState(UserState.CONFIRMING_EMAIL);
-        
         _userRepository.save(user);
+
+        // TODO send out token link via mail
+        String rawToken = _confirmationTokenService.generateConfirmationTokenForUser(user);
 
         return user;
     }
