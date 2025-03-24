@@ -10,6 +10,9 @@ public class LinkCreation implements Serializable {
     @JsonProperty("redirect_uri")
     private String redirectUri;
 
+    @JsonProperty("id")
+    private String id;
+
     public String getRedirectUri() {
         return redirectUri;
     }
@@ -17,5 +20,12 @@ public class LinkCreation implements Serializable {
     public void setRedirectUri(String redirectUri) {
         this.redirectUri = redirectUri;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
