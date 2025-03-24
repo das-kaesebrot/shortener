@@ -21,6 +21,7 @@ public class ShortenerUser implements Serializable {
     private Long id;
 
     @NotBlank
+    @Column(unique=true)
     private String username;
 
     @NotBlank
