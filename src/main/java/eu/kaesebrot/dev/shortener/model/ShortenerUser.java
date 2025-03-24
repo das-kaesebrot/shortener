@@ -124,4 +124,20 @@ public class ShortenerUser implements Serializable {
     public boolean hasState(UserState state) {
         return userState.contains(state);
     }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public Timestamp getModifiedAt() {
+        return modifiedAt;
+    }
 }
