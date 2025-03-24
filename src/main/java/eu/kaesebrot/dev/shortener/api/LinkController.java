@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
-@RequestMapping("/api/v1/shortener")
-@Tag(name = "link", description = "The Link API")
+@RequestMapping("/api/v1/shortener/links")
+@Tag(name = "links", description = "The Link API")
 public class LinkController {
     private final LinkRepository _linkRepository;
     private final ShortUriGenerator _shortUriGenerator;
@@ -27,12 +27,12 @@ public class LinkController {
         _shortUriGenerator = shortUriGenerator;
     }
 
-    @GetMapping("links")
+    @GetMapping
     Set<Link> getAllLinks() {
         return new HashSet<>(_linkRepository.findAll());
     }
 
-    @PostMapping("links")
+    @PostMapping
     Link createSingleLink(@RequestBody LinkCreation linkCreation) {
         String linkId = linkCreation.getId();
 
@@ -51,12 +51,12 @@ public class LinkController {
         return link;
     }
 
-    @GetMapping("links/{id}")
+    @GetMapping("{id}")
     Link getSingleLink(@PathVariable String id) {
         return _linkRepository.findById(id).orElseThrow(() -> new LinkNotFoundException(id));
     }
 
-    @DeleteMapping("links/{id}")
+    @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void deleteLink(@PathVariable String id) {
         if (!_linkRepository.existsById(id)) {
