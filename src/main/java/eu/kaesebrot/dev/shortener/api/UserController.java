@@ -49,4 +49,12 @@ public class UserController {
     ShortenerUser getUser(@PathVariable Long id) {
         return _userRepository.findById(id).orElseThrow();
     }
+
+    @GetMapping("confirm/{rawToken}")
+    void confirmUserAccount(@PathVariable String rawToken) {
+        ShortenerUser associatedUser = _confirmationTokenService.redeemToken(rawToken);
+        associatedUser = _userRepository.findById(associatedUser.getId()).orElseThrow();
+        associatedUser.removeState(UserState.CONFIRMING_EMAIL);
+        _userRepository.save(associatedUser);
+    }
 }
