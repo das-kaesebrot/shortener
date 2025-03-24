@@ -1,4 +1,4 @@
-package eu.kaesebrot.dev.shortener.link;
+package eu.kaesebrot.dev.shortener.api;
 import java.io.IOException;
 import java.util.Set;
 import java.util.HashSet;
