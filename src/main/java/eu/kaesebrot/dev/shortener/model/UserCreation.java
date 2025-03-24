@@ -12,7 +12,7 @@ import jakarta.validation.constraints.Size;
 public class UserCreation implements Serializable {
     @NotNull
     @Size(min = 5, max = 32)
-    @Pattern(regexp = "^[a-z0-9-]$", message = "Username is in wrong format! Has to be 5-32 chars long and only containing lowercase chars, digits or dashes.")
+    @Pattern(regexp = "^[a-z0-9-]+$", message = "Username is in wrong format! Has to be 5-32 chars long and only containing lowercase chars, digits or dashes.")
     @JsonProperty("username")
     private String username;
 
