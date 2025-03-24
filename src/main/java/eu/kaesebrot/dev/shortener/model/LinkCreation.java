@@ -2,6 +2,8 @@ package eu.kaesebrot.dev.shortener.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
 
@@ -11,6 +13,8 @@ public class LinkCreation implements Serializable {
     private String redirectUri;
 
     @JsonProperty("id")
+    @Size(min = 5, max = 32)
+    @Pattern(regexp = "^[a-z0-9-]$", message = "Id is in wrong format! Has to be 5-32 chars long and only containing lowercase chars, digits or dashes.")
     private String id;
 
     public String getRedirectUri() {
