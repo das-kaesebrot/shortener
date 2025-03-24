@@ -7,7 +7,7 @@ import eu.kaesebrot.dev.shortener.exceptions.LinkNotFoundException;
 import eu.kaesebrot.dev.shortener.model.Link;
 import eu.kaesebrot.dev.shortener.model.LinkCreation;
 import eu.kaesebrot.dev.shortener.repository.LinkRepository;
-import eu.kaesebrot.dev.shortener.utils.ShortUriGenerator;
+import eu.kaesebrot.dev.shortener.utils.HexStringGenerator;
 import eu.kaesebrot.dev.shortener.utils.StringUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -20,11 +20,11 @@ import org.springframework.web.servlet.view.RedirectView;
 @Tag(name = "links", description = "The Link API")
 public class LinkController {
     private final LinkRepository _linkRepository;
-    private final ShortUriGenerator _shortUriGenerator;
+    private final HexStringGenerator _hexStringGenerator;
     
-    LinkController(LinkRepository repository, ShortUriGenerator shortUriGenerator) {
+    LinkController(LinkRepository repository, HexStringGenerator hexStringGenerator) {
         _linkRepository = repository;
-        _shortUriGenerator = shortUriGenerator;
+        _hexStringGenerator = hexStringGenerator;
     }
 
     @GetMapping
@@ -38,7 +38,7 @@ public class LinkController {
 
         if (StringUtils.isNullOrEmpty(linkId)) {
             do {
-                linkId = _shortUriGenerator.generate(5);
+                linkId = _hexStringGenerator.generate(5);
             } while (_linkRepository.existsById(linkId));
         } else if (_linkRepository.existsById(linkId)) {
             throw new IllegalArgumentException(String.format("Link with id %s already exists!", linkId));

@@ -6,7 +6,7 @@ import java.util.HexFormat;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ShortUriGeneratorImpl implements ShortUriGenerator {
+public class HexStringGeneratorImpl implements HexStringGenerator {
     private final SecureRandom secureRandom = new SecureRandom();
 
     @Override
