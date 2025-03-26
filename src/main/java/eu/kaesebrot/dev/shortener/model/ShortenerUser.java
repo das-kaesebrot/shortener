@@ -15,6 +15,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import eu.kaesebrot.dev.shortener.enums.UserState;
 
@@ -49,6 +50,7 @@ public class ShortenerUser implements Serializable {
     @ElementCollection(targetClass = UserState.class)
     @CollectionTable
     @Enumerated(EnumType.STRING)
+    @JsonProperty("user_state")
     private Set<UserState> userState;
 
     @Column(nullable = true)
@@ -57,10 +59,12 @@ public class ShortenerUser implements Serializable {
 
     @CreationTimestamp
     @Column(nullable = false)
+    @JsonProperty("created_at")
     private Timestamp createdAt;
 
     @UpdateTimestamp
     @Column(nullable = false)
+    @JsonProperty("modified_at")
     private Timestamp modifiedAt;
 
     public ShortenerUser(@NotBlank String username, @NotBlank String passwordHash, String email) {
