@@ -1,8 +1,10 @@
 package eu.kaesebrot.dev.shortener.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-@ConfigurationProperties
+@Configuration
+@ConfigurationProperties("shortener.mail")
 public class MailProperties {
     private String hostName;
     private int port = 465;

@@ -1,8 +1,10 @@
 package eu.kaesebrot.dev.shortener.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-@ConfigurationProperties
+@Configuration
+@ConfigurationProperties(prefix = "shortener.db")
 public class DatabaseProperties {
     private String url = "jdbc:sqlite:test.db";
     private String driverClassName = "org.sqlite.JDBC";
