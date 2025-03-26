@@ -1,5 +1,7 @@
 package eu.kaesebrot.dev.shortener.service;
 
+import java.net.URI;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,17 +16,20 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
     private final ShortenerUserRepository shortenerUserRepository;
     private final HexStringGenerator hexStringGenerator;
 
-    public EmailConfirmationTokenServiceImpl(ShortenerUserRepository shortenerUserRepository, HexStringGenerator hexStringGenerator) {
+    public EmailConfirmationTokenServiceImpl(ShortenerUserRepository shortenerUserRepository,
+            HexStringGenerator hexStringGenerator) {
         this.shortenerUserRepository = shortenerUserRepository;
         this.hexStringGenerator = hexStringGenerator;
     }
 
     @Override
-    public String generateConfirmationTokenForUser(ShortenerUser user) {
+    public void generateAndSendConfirmationTokenToUser(ShortenerUser user, URI originalRequestUri,
+            String tokenConfirmationPath) {
         String rawToken = hexStringGenerator.generateToken();
         user.updateHashedConfirmationToken(passwordEncoder.encode(rawToken));
         shortenerUserRepository.save(user);
-        return rawToken;
+
+        // TODO send out the mail here
     }
 
     @Override
@@ -34,5 +39,5 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
         user.setEmailVerified();
         shortenerUserRepository.save(user);
     }
-    
+
 }
