@@ -6,9 +6,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "shortener.db")
 public class DatabaseProperties {
-    private String url = "jdbc:sqlite:test.db";
-    private String driverClassName = "org.sqlite.JDBC";
-    private String databasePlatform = "org.hibernate.community.dialect.SQLiteDialect";
+
+    private final String DEFAULT_URL = "jdbc:sqlite:shortener.db";
+    private final String DEFAULT_DRIVER_CLASS_NAME = "org.sqlite.JDBC";
+    private final String DEFAULT_DATABASE_PLATFORM = "org.hibernate.community.dialect.SQLiteDialect";
+
+    private String url = DEFAULT_URL;
+    private String driverClassName = DEFAULT_DRIVER_CLASS_NAME;
+    private String databasePlatform = DEFAULT_DATABASE_PLATFORM;
     private String username;
     private String password;
 
