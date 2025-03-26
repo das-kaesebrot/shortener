@@ -20,38 +20,38 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/v1/shortener/users")
 @Tag(name = "users", description = "The User API")
 public class UserController {
-    private final ShortenerUserRepository _userRepository;
-    private final EmailConfirmationTokenService _confirmationTokenService;
-    private final BCryptPasswordEncoder _passwordEncoder = new BCryptPasswordEncoder();
+    private final ShortenerUserRepository userRepository;
+    private final EmailConfirmationTokenService confirmationTokenService;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     
-    UserController(ShortenerUserRepository repository, EmailConfirmationTokenService confirmationTokenService) {
-        _userRepository = repository;
-        _confirmationTokenService = confirmationTokenService;
+    UserController(ShortenerUserRepository userRepository, EmailConfirmationTokenService confirmationTokenService) {
+        this.userRepository = userRepository;
+        this.confirmationTokenService = confirmationTokenService;
     }
 
     @PostMapping
     ShortenerUser registerUser(@Valid @RequestBody UserCreation userCreation) {
 
-        if (_userRepository.existsByEmail(userCreation.getEmail()) || _userRepository.existsByUsername(userCreation.getUsername())) {
+        if (userRepository.existsByEmail(userCreation.getEmail()) || userRepository.existsByUsername(userCreation.getUsername())) {
             throw new IllegalArgumentException("User already exists!");
         }
 
-        ShortenerUser user = new ShortenerUser(userCreation.getUsername(), _passwordEncoder.encode(userCreation.getRawPassword()), userCreation.getEmail());
+        ShortenerUser user = new ShortenerUser(userCreation.getUsername(), passwordEncoder.encode(userCreation.getRawPassword()), userCreation.getEmail());
         // TODO send out token link via mail
-        String rawToken = _confirmationTokenService.generateConfirmationTokenForUser(user);
-        user.updateHashedConfirmationToken(_passwordEncoder.encode(rawToken));
-        _userRepository.save(user);
+        String rawToken = confirmationTokenService.generateConfirmationTokenForUser(user);
+        user.updateHashedConfirmationToken(passwordEncoder.encode(rawToken));
+        userRepository.save(user);
 
         return user;
     }
 
     @GetMapping("{id}")
     ShortenerUser getUser(@PathVariable Long id) {
-        return _userRepository.findById(id).orElseThrow();
+        return userRepository.findById(id).orElseThrow();
     }
 
     @GetMapping("confirm/{rawToken}")
     void confirmUserAccount(@PathVariable String rawToken) {
-        _confirmationTokenService.redeemToken(rawToken);
+        confirmationTokenService.redeemToken(rawToken);
     }
 }

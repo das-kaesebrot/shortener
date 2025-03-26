@@ -20,17 +20,17 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping("/api/v1/shortener/links")
 @Tag(name = "links", description = "The Link API")
 public class LinkController {
-    private final LinkRepository _linkRepository;
-    private final HexStringGenerator _hexStringGenerator;
+    private final LinkRepository linkRepository;
+    private final HexStringGenerator hexStringGenerator;
     
-    LinkController(LinkRepository repository, HexStringGenerator hexStringGenerator) {
-        _linkRepository = repository;
-        _hexStringGenerator = hexStringGenerator;
+    LinkController(LinkRepository linkRepository, HexStringGenerator hexStringGenerator) {
+        this.linkRepository = linkRepository;
+        this.hexStringGenerator = hexStringGenerator;
     }
 
     @GetMapping
     Set<Link> getAllLinks() {
-        return new HashSet<>(_linkRepository.findAll());
+        return new HashSet<>(linkRepository.findAll());
     }
 
     @PostMapping
@@ -39,40 +39,40 @@ public class LinkController {
 
         if (StringUtils.isNullOrEmpty(linkId)) {
             do {
-                linkId = _hexStringGenerator.generate(5);
-            } while (_linkRepository.existsById(linkId));
-        } else if (_linkRepository.existsById(linkId)) {
+                linkId = hexStringGenerator.generate(5);
+            } while (linkRepository.existsById(linkId));
+        } else if (linkRepository.existsById(linkId)) {
             throw new IllegalArgumentException(String.format("Link with id %s already exists!", linkId));
         }
 
         Link link = new Link(linkId, linkCreation.getRedirectUri(), null);
 
-        _linkRepository.save(link);
+        linkRepository.save(link);
 
         return link;
     }
 
     @GetMapping("{id}")
     Link getSingleLink(@PathVariable String id) {
-        return _linkRepository.findById(id).orElseThrow(() -> new LinkNotFoundException(id));
+        return linkRepository.findById(id).orElseThrow(() -> new LinkNotFoundException(id));
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void deleteLink(@PathVariable String id) {
-        if (!_linkRepository.existsById(id)) {
+        if (!linkRepository.existsById(id)) {
             throw new LinkNotFoundException(id);
         }
 
-        _linkRepository.deleteById(id);
+        linkRepository.deleteById(id);
     }
 
     @GetMapping("redirect/{id}")
     @ResponseStatus(HttpStatus.FOUND)
     RedirectView redirectShortUri(@PathVariable String id) throws IOException {
-        var link = _linkRepository.findById(id).orElseThrow();
+        var link = linkRepository.findById(id).orElseThrow();
         link.incrementHits();
-        _linkRepository.save(link);
+        linkRepository.save(link);
 
         return new RedirectView(link.getRedirectUri().toString());
     }

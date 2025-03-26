@@ -11,23 +11,23 @@ import eu.kaesebrot.dev.shortener.utils.StringUtils;
 
 @Configuration
 public class DataSourceConfig {
-    private final DatabaseProperties _databaseProperties;
+    private final DatabaseProperties databaseProperties;
 
     public DataSourceConfig(DatabaseProperties databaseProperties) {
-        _databaseProperties = databaseProperties;
+        this.databaseProperties = databaseProperties;
     }
 
     @Bean
     public DataSource getDataSource() {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create()
-                .driverClassName(_databaseProperties.getDriverClassName())
-                .url(_databaseProperties.getUrl());
+                .driverClassName(databaseProperties.getDriverClassName())
+                .url(databaseProperties.getUrl());
 
-        if (!StringUtils.isNullOrEmpty(_databaseProperties.getUsername())
-                && !StringUtils.isNullOrEmpty(_databaseProperties.getPassword())) {
+        if (!StringUtils.isNullOrEmpty(databaseProperties.getUsername())
+                && !StringUtils.isNullOrEmpty(databaseProperties.getPassword())) {
             dataSourceBuilder
-                    .username(_databaseProperties.getUsername())
-                    .password(_databaseProperties.getPassword());
+                    .username(databaseProperties.getUsername())
+                    .password(databaseProperties.getPassword());
         }
 
         return dataSourceBuilder.build();

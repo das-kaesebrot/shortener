@@ -10,29 +10,29 @@ import eu.kaesebrot.dev.shortener.utils.HexStringGenerator;
 @Service
 public class EmailConfirmationTokenServiceImpl implements EmailConfirmationTokenService {
 
-    private final BCryptPasswordEncoder _passwordEncoder = new BCryptPasswordEncoder();
-    private final ShortenerUserRepository _shortenerUserRepository;
-    private final HexStringGenerator _hexStringGenerator;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final ShortenerUserRepository shortenerUserRepository;
+    private final HexStringGenerator hexStringGenerator;
 
     public EmailConfirmationTokenServiceImpl(ShortenerUserRepository shortenerUserRepository, HexStringGenerator hexStringGenerator) {
-        _shortenerUserRepository = shortenerUserRepository;
-        _hexStringGenerator = hexStringGenerator;
+        this.shortenerUserRepository = shortenerUserRepository;
+        this.hexStringGenerator = hexStringGenerator;
     }
 
     @Override
     public String generateConfirmationTokenForUser(ShortenerUser user) {
-        String rawToken = _hexStringGenerator.generateToken();
-        user.updateHashedConfirmationToken(_passwordEncoder.encode(rawToken));
-        _shortenerUserRepository.save(user);
+        String rawToken = hexStringGenerator.generateToken();
+        user.updateHashedConfirmationToken(passwordEncoder.encode(rawToken));
+        shortenerUserRepository.save(user);
         return rawToken;
     }
 
     @Override
     public void redeemToken(String rawToken) {
-        String encodedToken = _passwordEncoder.encode(rawToken);
-        ShortenerUser user = _shortenerUserRepository.findByHashedConfirmationToken(encodedToken).orElseThrow();
+        String encodedToken = passwordEncoder.encode(rawToken);
+        ShortenerUser user = shortenerUserRepository.findByHashedConfirmationToken(encodedToken).orElseThrow();
         user.setEmailVerified();
-        _shortenerUserRepository.save(user);
+        shortenerUserRepository.save(user);
     }
     
 }
