@@ -1,4 +1,5 @@
 package eu.kaesebrot.dev.shortener.api;
+import java.net.URI;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,12 +11,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import eu.kaesebrot.dev.shortener.enums.UserState;
 import eu.kaesebrot.dev.shortener.model.ShortenerUser;
 import eu.kaesebrot.dev.shortener.model.UserCreation;
 import eu.kaesebrot.dev.shortener.repository.ShortenerUserRepository;
 import eu.kaesebrot.dev.shortener.service.EmailConfirmationTokenService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 
@@ -35,17 +36,15 @@ public class UserController {
     }
 
     @PostMapping
-    ShortenerUser registerUser(@Valid @RequestBody UserCreation userCreation) {
+    ShortenerUser registerUser(HttpServletRequest request, @Valid @RequestBody UserCreation userCreation) {
 
         if (userRepository.existsByEmail(userCreation.getEmail()) || userRepository.existsByUsername(userCreation.getUsername())) {
             throw new IllegalArgumentException("User already exists!");
         }
 
         ShortenerUser user = new ShortenerUser(userCreation.getUsername(), passwordEncoder.encode(userCreation.getRawPassword()), userCreation.getEmail());
-        // TODO send out token link via mail
-        String rawToken = confirmationTokenService.generateConfirmationTokenForUser(user);
-        user.updateHashedConfirmationToken(passwordEncoder.encode(rawToken));
-        userRepository.save(user);
+        
+        confirmationTokenService.generateAndSendConfirmationTokenToUser(user, URI.create(request.getRequestURL().toString()), "/api/v1/shortener/users/confirm");
 
         return user;
     }
