@@ -13,6 +13,8 @@ import jakarta.validation.constraints.NotBlank;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import eu.kaesebrot.dev.shortener.enums.UserState;
 
 @Entity
@@ -38,6 +40,7 @@ public class ShortenerUser implements Serializable {
     private String email;
 
     @OneToMany(mappedBy="owner")
+    @JsonManagedReference
     private Set<Link> links;
     
     @ElementCollection(targetClass = UserState.class)

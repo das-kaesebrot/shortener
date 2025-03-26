@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import eu.kaesebrot.dev.shortener.utils.StringUtils;
@@ -30,6 +31,7 @@ public class Link implements Serializable {
     @ManyToOne
     @JoinColumn
     (name = "owner_id")
+    @JsonBackReference
     private ShortenerUser owner;
 
     @CreationTimestamp
