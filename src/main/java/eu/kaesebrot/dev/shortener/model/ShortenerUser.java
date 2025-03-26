@@ -13,6 +13,7 @@ import jakarta.validation.constraints.NotBlank;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import eu.kaesebrot.dev.shortener.enums.UserState;
@@ -20,6 +21,7 @@ import eu.kaesebrot.dev.shortener.enums.UserState;
 @Entity
 public class ShortenerUser implements Serializable {
     @Version
+    @JsonIgnore
     private long version;
 
     @Id
@@ -32,6 +34,7 @@ public class ShortenerUser implements Serializable {
     private String username;
 
     @NotBlank
+    @JsonIgnore
     private String passwordHash;
 
     @NotBlank
@@ -49,6 +52,7 @@ public class ShortenerUser implements Serializable {
     private Set<UserState> userState;
 
     @Column(nullable = true)
+    @JsonIgnore
     private String hashedConfirmationToken;
 
     @CreationTimestamp
