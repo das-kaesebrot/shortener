@@ -15,11 +15,13 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final ShortenerUserRepository shortenerUserRepository;
     private final HexStringGenerator hexStringGenerator;
+    private final EmailSendingService emailSendingService;
 
     public EmailConfirmationTokenServiceImpl(ShortenerUserRepository shortenerUserRepository,
-            HexStringGenerator hexStringGenerator) {
+            HexStringGenerator hexStringGenerator, EmailSendingService emailSendingService) {
         this.shortenerUserRepository = shortenerUserRepository;
         this.hexStringGenerator = hexStringGenerator;
+        this.emailSendingService = emailSendingService;
     }
 
     @Override
@@ -29,7 +31,16 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
         user.updateHashedConfirmationToken(passwordEncoder.encode(rawToken));
         shortenerUserRepository.save(user);
 
-        // TODO send out the mail here
+        String portString = "";
+
+        if (originalRequestUri.getPort() != -1) {
+            portString = String.format(":%d", originalRequestUri.getPort());
+        }
+
+        String text = String.format("Please confirm your mail address by visiting the following page in your browser: %s://%s%s/%s/%s", originalRequestUri.getScheme(), originalRequestUri.getHost(), portString, tokenConfirmationPath, rawToken);
+        String subject = "Please confirm your mail address";
+
+        emailSendingService.sendMessage(user.getEmail(), subject, text);
     }
 
     @Override
