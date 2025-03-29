@@ -25,5 +25,5 @@ public class EmailSendingServiceImpl implements EmailSendingService {
         message.setSubject(subject);
         message.setText(text);
         javaMailSender.send(message);
-    }    
+    }
 }

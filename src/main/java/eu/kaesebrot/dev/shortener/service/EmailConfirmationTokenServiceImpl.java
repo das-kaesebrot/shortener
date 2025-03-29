@@ -37,7 +37,10 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
             portString = String.format(":%d", originalRequestUri.getPort());
         }
 
-        String text = String.format("Please confirm your mail address by visiting the following page in your browser: %s://%s%s/%s/%s", originalRequestUri.getScheme(), originalRequestUri.getHost(), portString, tokenConfirmationPath, rawToken);
+        String text = String.format(
+                "Please confirm your mail address by visiting the following page in your browser: %s://%s%s/%s/%s",
+                originalRequestUri.getScheme(), originalRequestUri.getHost(), portString, tokenConfirmationPath,
+                rawToken);
         String subject = "Please confirm your mail address";
 
         emailSendingService.sendMessage(user.getEmail(), subject, text);
