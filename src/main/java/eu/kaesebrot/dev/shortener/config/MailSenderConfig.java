@@ -27,7 +27,7 @@ public class MailSenderConfig {
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         
-        if (StringUtils.isNullOrEmpty(mailProperties.getUsername()) && StringUtils.isNullOrEmpty(mailProperties.getPassword())) {
+        if (!StringUtils.isNullOrEmpty(mailProperties.getUsername()) && !StringUtils.isNullOrEmpty(mailProperties.getPassword())) {
             mailSender.setUsername(mailProperties.getUsername());
             mailSender.setPassword(mailProperties.getPassword());
             props.put("mail.smtp.auth", "true");
