@@ -2,6 +2,8 @@ package eu.kaesebrot.dev.shortener.service;
 
 import java.net.URI;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
     private final ShortenerUserRepository shortenerUserRepository;
     private final HexStringGenerator hexStringGenerator;
     private final EmailSendingService emailSendingService;
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public EmailConfirmationTokenServiceImpl(ShortenerUserRepository shortenerUserRepository,
             HexStringGenerator hexStringGenerator, EmailSendingService emailSendingService) {
