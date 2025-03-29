@@ -43,8 +43,9 @@ public class UserController {
         }
 
         ShortenerUser user = new ShortenerUser(userCreation.getUsername(), passwordEncoder.encode(userCreation.getRawPassword()), userCreation.getEmail());
+        userRepository.save(user);
         
-        confirmationTokenService.generateAndSendConfirmationTokenToUser(user, URI.create(request.getRequestURL().toString()), "api/v1/shortener/users/confirm");
+        confirmationTokenService.generateAndSendConfirmationTokenToUser(user, URI.create(request.getRequestURL().toString()), String.format("api/v1/shortener/users/%d/confirm", user.getId()));
 
         return user;
     }
@@ -54,8 +55,9 @@ public class UserController {
         return userRepository.findById(id).orElseThrow();
     }
 
-    @GetMapping("confirm/{rawToken}")
-    void confirmUserAccount(@PathVariable String rawToken) {
-        confirmationTokenService.redeemToken(rawToken);
+    @GetMapping("{id}/confirm/{token}")
+    void confirmUserAccount(@PathVariable("id") Long id, @PathVariable("token") String rawToken) {
+        ShortenerUser user = userRepository.findById(id).orElseThrow();
+        confirmationTokenService.redeemToken(user, rawToken);
     }
 }
