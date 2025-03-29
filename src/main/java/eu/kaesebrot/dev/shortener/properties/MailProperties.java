@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("shortener.mail")
 public class MailProperties {
     private String host;
-    private int port = 465;
+    private int port = 25;
     private boolean ssl = true;
     private boolean starttls = false;
     private String from;
