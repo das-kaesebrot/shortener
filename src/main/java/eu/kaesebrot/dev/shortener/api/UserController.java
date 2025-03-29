@@ -44,7 +44,7 @@ public class UserController {
 
         ShortenerUser user = new ShortenerUser(userCreation.getUsername(), passwordEncoder.encode(userCreation.getRawPassword()), userCreation.getEmail());
         
-        confirmationTokenService.generateAndSendConfirmationTokenToUser(user, URI.create(request.getRequestURL().toString()), "/api/v1/shortener/users/confirm");
+        confirmationTokenService.generateAndSendConfirmationTokenToUser(user, URI.create(request.getRequestURL().toString()), "api/v1/shortener/users/confirm");
 
         return user;
     }
