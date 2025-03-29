@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class MailProperties {
     private String host;
     private int port = 25;
-    private boolean ssl = true;
+    private boolean ssl = false;
     private boolean starttls = false;
     private String from;
     private String username;
