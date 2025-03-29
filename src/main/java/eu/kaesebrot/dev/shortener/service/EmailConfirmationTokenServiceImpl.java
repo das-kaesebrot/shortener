@@ -51,9 +51,10 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
     }
 
     @Override
-    public void redeemToken(String rawToken) {
-        String encodedToken = passwordEncoder.encode(rawToken);
-        ShortenerUser user = shortenerUserRepository.findByHashedConfirmationToken(encodedToken).orElseThrow();
+    public void redeemToken(ShortenerUser user, String rawToken) {
+        if (!passwordEncoder.matches(rawToken, user.getHashedConfirmationToken())) {
+            throw new IllegalArgumentException("Token doesn't match!");
+        }
         user.setEmailVerified();
         shortenerUserRepository.save(user);
     }

@@ -6,5 +6,5 @@ import eu.kaesebrot.dev.shortener.model.ShortenerUser;
 
 public interface EmailConfirmationTokenService {
     void generateAndSendConfirmationTokenToUser(ShortenerUser user, URI originalRequestUri, String tokenConfirmationPath);
-    void redeemToken(String rawToken);
+    void redeemToken(ShortenerUser user, String rawToken);
 }
