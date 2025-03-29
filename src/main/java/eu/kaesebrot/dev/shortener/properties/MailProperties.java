@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties("shortener.mail")
 public class MailProperties {
-    private String hostName;
+    private String host;
     private int port = 465;
     private boolean ssl = true;
     private boolean starttls = false;
@@ -14,12 +14,12 @@ public class MailProperties {
     private String username;
     private String password;
 
-    public String getHostName() {
-        return hostName;
+    public String getHost() {
+        return host;
     }
 
-    public void setHostName(String hostName) {
-        this.hostName = hostName;
+    public void setHost(String hostName) {
+        this.host = hostName;
     }
 
     public int getPort() {
