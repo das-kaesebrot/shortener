@@ -30,7 +30,7 @@ public class MailProperties {
         this.port = port;
     }
 
-    public boolean isSsl() {
+    public boolean getSsl() {
         return ssl;
     }
 
@@ -38,7 +38,7 @@ public class MailProperties {
         this.ssl = ssl;
     }
 
-    public boolean isStarttls() {
+    public boolean getStarttls() {
         return starttls;
     }
 
