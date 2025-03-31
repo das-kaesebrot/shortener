@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -26,9 +27,9 @@ public class ShortenerUser implements Serializable {
     private long version;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(updatable = false, nullable = false)
-    private Long id;
+    private UUID id;
 
     @NotBlank
     @Column(unique=true)
@@ -139,7 +140,7 @@ public class ShortenerUser implements Serializable {
         return version;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 

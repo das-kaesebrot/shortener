@@ -1,5 +1,6 @@
 package eu.kaesebrot.dev.shortener.api;
 import java.net.URI;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,18 +46,18 @@ public class UserController {
         ShortenerUser user = new ShortenerUser(userCreation.getUsername(), passwordEncoder.encode(userCreation.getRawPassword()), userCreation.getEmail());
         userRepository.save(user);
         
-        confirmationTokenService.generateAndSendConfirmationTokenToUser(user, URI.create(request.getRequestURL().toString()), String.format("api/v1/shortener/users/%d/confirm", user.getId()));
+        confirmationTokenService.generateAndSendConfirmationTokenToUser(user, URI.create(request.getRequestURL().toString()), String.format("api/v1/shortener/users/%s/confirm", user.getId().toString()));
 
         return user;
     }
 
     @GetMapping("{id}")
-    ShortenerUser getUser(@PathVariable Long id) {
+    ShortenerUser getUser(@PathVariable UUID id) {
         return userRepository.findById(id).orElseThrow();
     }
 
     @GetMapping("{id}/confirm/{token}")
-    void confirmUserAccount(@PathVariable("id") Long id, @PathVariable("token") String rawToken) {
+    void confirmUserAccount(@PathVariable("id") UUID id, @PathVariable("token") String rawToken) {
         ShortenerUser user = userRepository.findById(id).orElseThrow();
         confirmationTokenService.redeemToken(user, rawToken);
     }
