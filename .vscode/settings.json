@@ -1,5 +1,9 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
     "java.configuration.updateBuildConfiguration": "automatic",
-    "java.project.sourcePaths": [ "src" ]
+    "java.project.sourcePaths": [
+        "src"
+    ],
+    "workbench.iconTheme": "vscode-jetbrains-icon-theme-2023-auto",
+    "workbench.colorTheme": "JetBrains Rider Dark Theme"
 }
