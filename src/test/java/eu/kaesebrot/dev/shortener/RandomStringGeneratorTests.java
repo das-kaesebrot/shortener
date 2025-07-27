@@ -18,13 +18,13 @@ class RandomStringGeneratorTests {
     private RandomStringGenerator randomStringGenerator;
 
 	@Test
-	@DisplayName("Generate correct length hex String")
-	void givenLength_whenGenerate_thenGenerateHexStringInExpectedLength() {
+	@DisplayName("Generate correct length String")
+	void givenLength_whenGenerate_thenGenerateStringInExpectedLength() {
 		int expectedLength = 5;
 		var generatedString = randomStringGenerator.generate(expectedLength);
 		
 		assertEquals(expectedLength, generatedString.length());
-		assertTrue(Pattern.matches("^[a-f0-9]+$", generatedString));
+		assertTrue(Pattern.matches("^[a-zA-Z0-9]+$", generatedString));
 	}
 
 	@Test
