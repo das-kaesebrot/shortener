@@ -1,7 +1,6 @@
 package eu.kaesebrot.dev.shortener.api;
 
 import eu.kaesebrot.dev.shortener.repository.LinkRepository;
-import eu.kaesebrot.dev.shortener.utils.HexStringGenerator;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,7 @@ import java.io.IOException;
 public class AliasLinkController {
     private final LinkRepository linkRepository;
 
-    AliasLinkController(LinkRepository linkRepository, HexStringGenerator hexStringGenerator) {
+    AliasLinkController(LinkRepository linkRepository) {
         this.linkRepository = linkRepository;
     }
 
