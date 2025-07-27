@@ -8,15 +8,24 @@ import org.springframework.stereotype.Service;
 @Service
 public class RandomStringGeneratorImpl implements RandomStringGenerator {
     private final SecureRandom secureRandom = new SecureRandom();
-    
+
+    private final String RAND_ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
     private final int TOKEN_BYTES = 32;
 
     @Override
     public String generate(int length) {
-        // generate bytes in half the amount of the requested length (rounded up) since 2 hex chars are 1 byte
-        byte[] seed = secureRandom.generateSeed((int) Math.ceil(length / 2D));
-        String hexString = HexFormat.of().formatHex(seed);
-        return hexString.substring(0, length);
+        return generate(length, RAND_ALPHABET);
+    }
+
+    @Override
+    public String generate(int length, String alphabet) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 0; i < length; i ++) {
+            stringBuilder.append(alphabet.charAt(secureRandom.nextInt(alphabet.length())));
+        }
+
+        return stringBuilder.toString();
     }
 
     @Override
