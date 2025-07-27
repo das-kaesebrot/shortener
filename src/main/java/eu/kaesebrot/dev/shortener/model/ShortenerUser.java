@@ -1,11 +1,8 @@
 package eu.kaesebrot.dev.shortener.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.time.Instant;
+import java.util.*;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -19,9 +16,11 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import eu.kaesebrot.dev.shortener.enums.UserState;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
-public class ShortenerUser implements Serializable {
+public class ShortenerUser implements Serializable, UserDetails {
     @Version
     @JsonIgnore
     private long version;
@@ -43,6 +42,17 @@ public class ShortenerUser implements Serializable {
     @Email
     @Column(unique=true)
     private String email;
+
+    @Column(nullable = true)
+    @JsonProperty("account_expired_at")
+    private Timestamp accountExpiredAt;
+
+    @Column(nullable = true)
+    @JsonProperty("credentials_expired_at")
+    private Timestamp credentialsExpiredAt;
+
+    @JsonProperty("is_locked")
+    private boolean locked;
 
     @OneToMany(mappedBy="owner")
     @JsonManagedReference
@@ -80,6 +90,7 @@ public class ShortenerUser implements Serializable {
         this.userState = Collections.synchronizedSet(EnumSet.noneOf(UserState.class));
     }
 
+
     public String getUsername() {
         return username;
     }
@@ -88,11 +99,12 @@ public class ShortenerUser implements Serializable {
         this.username = username;
     }
 
-    public String getPasswordHash() {
+    @Override
+    public String getPassword() {
         return passwordHash;
     }
 
-    public void setPasswordHash(String passwordHash) {
+    public void setPassword(String passwordHash) {
         this.passwordHash = passwordHash;
     }
 
@@ -168,5 +180,64 @@ public class ShortenerUser implements Serializable {
     public void setEmailVerified() {
         this.hashedConfirmationToken = null;
         removeState(UserState.CONFIRMING_EMAIL);
+    }
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return accountExpiredAt.before(Timestamp.from(Instant.now()));
+    }
+
+    public void setAccountExpired() {
+        if (accountExpiredAt != null) {
+            return;
+        }
+
+        accountExpiredAt = Timestamp.from(Instant.now());
+    }
+
+    public void setAccountExpired(Instant instant) {
+        accountExpiredAt = Timestamp.from(instant);
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return locked;
+    }
+
+    public void lockAccount() {
+        locked = true;
+    }
+
+    public void unlockAccount() {
+        locked = false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return credentialsExpiredAt.before(Timestamp.from(Instant.now()));
+    }
+
+    public void setCredentialsExpired() {
+        if (credentialsExpiredAt != null) {
+            return;
+        }
+
+        credentialsExpiredAt = Timestamp.from(Instant.now());
+    }
+
+    public void setCredentialsExpired(Instant instant) {
+        credentialsExpiredAt = Timestamp.from(instant);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        // TODO
+        return true;
     }
 }
