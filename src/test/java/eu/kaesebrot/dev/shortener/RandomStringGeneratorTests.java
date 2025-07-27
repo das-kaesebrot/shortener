@@ -10,18 +10,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import eu.kaesebrot.dev.shortener.utils.HexStringGenerator;
+import eu.kaesebrot.dev.shortener.utils.RandomStringGenerator;
 
 @SpringBootTest
-class HexStringGeneratorTests {
+class RandomStringGeneratorTests {
     @Autowired
-    private HexStringGenerator hexStringGenerator;
+    private RandomStringGenerator randomStringGenerator;
 
 	@Test
 	@DisplayName("Generate correct length hex String")
 	void givenLength_whenGenerate_thenGenerateHexStringInExpectedLength() {
 		int expectedLength = 5;
-		var generatedString = hexStringGenerator.generate(expectedLength);
+		var generatedString = randomStringGenerator.generate(expectedLength);
 		
 		assertEquals(expectedLength, generatedString.length());
 		assertTrue(Pattern.matches("^[a-f0-9]+$", generatedString));
@@ -29,8 +29,8 @@ class HexStringGeneratorTests {
 
 	@Test
 	@DisplayName("Generate correct length token")
-	void whenGenerateToken_thenGenerateTokenInExpectedLength() {
-		var generatedString = hexStringGenerator.generateToken();
+	void whenGenerateToken_thenGenerateHexTokenInExpectedLength() {
+		var generatedString = randomStringGenerator.generateHexToken();
 		
 		assertEquals(64, generatedString.length());
 		assertTrue(Pattern.matches("^[a-f0-9]+$", generatedString));

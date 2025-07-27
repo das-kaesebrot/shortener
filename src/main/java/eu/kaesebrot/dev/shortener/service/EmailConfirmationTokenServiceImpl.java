@@ -9,29 +9,29 @@ import org.springframework.stereotype.Service;
 
 import eu.kaesebrot.dev.shortener.model.ShortenerUser;
 import eu.kaesebrot.dev.shortener.repository.ShortenerUserRepository;
-import eu.kaesebrot.dev.shortener.utils.HexStringGenerator;
+import eu.kaesebrot.dev.shortener.utils.RandomStringGenerator;
 
 @Service
 public class EmailConfirmationTokenServiceImpl implements EmailConfirmationTokenService {
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final ShortenerUserRepository shortenerUserRepository;
-    private final HexStringGenerator hexStringGenerator;
+    private final RandomStringGenerator randomStringGenerator;
     private final EmailSendingService emailSendingService;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public EmailConfirmationTokenServiceImpl(ShortenerUserRepository shortenerUserRepository,
-            HexStringGenerator hexStringGenerator, EmailSendingService emailSendingService) {
+                                             RandomStringGenerator randomStringGenerator, EmailSendingService emailSendingService) {
         this.shortenerUserRepository = shortenerUserRepository;
-        this.hexStringGenerator = hexStringGenerator;
+        this.randomStringGenerator = randomStringGenerator;
         this.emailSendingService = emailSendingService;
     }
 
     @Override
     public void generateAndSendConfirmationTokenToUser(ShortenerUser user, URI originalRequestUri,
             String tokenConfirmationPath) {
-        String rawToken = hexStringGenerator.generateToken();
+        String rawToken = randomStringGenerator.generateHexToken();
         user.updateHashedConfirmationToken(passwordEncoder.encode(rawToken));
         shortenerUserRepository.save(user);
 

@@ -6,7 +6,7 @@ import java.util.HexFormat;
 import org.springframework.stereotype.Service;
 
 @Service
-public class HexStringGeneratorImpl implements HexStringGenerator {
+public class RandomStringGeneratorImpl implements RandomStringGenerator {
     private final SecureRandom secureRandom = new SecureRandom();
     
     private final int TOKEN_BYTES = 32;
@@ -20,7 +20,7 @@ public class HexStringGeneratorImpl implements HexStringGenerator {
     }
 
     @Override
-    public String generateToken() {
+    public String generateHexToken() {
         // generate 32 Byte -> 64 hex chars
         byte[] seed = secureRandom.generateSeed(TOKEN_BYTES);
         return HexFormat.of().formatHex(seed);
