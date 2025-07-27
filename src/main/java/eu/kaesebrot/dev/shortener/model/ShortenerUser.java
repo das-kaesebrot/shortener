@@ -1,5 +1,4 @@
 package eu.kaesebrot.dev.shortener.model;
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.*;
@@ -20,7 +19,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
-public class ShortenerUser implements Serializable, UserDetails {
+public class ShortenerUser implements UserDetails {
     @Version
     @JsonIgnore
     private long version;
@@ -64,6 +63,11 @@ public class ShortenerUser implements Serializable, UserDetails {
     @JsonProperty("user_state")
     private Set<UserState> userState;
 
+    @ElementCollection(targetClass = GrantedAuthority.class)
+    @CollectionTable
+    @JsonProperty("authorities")
+    private Set<GrantedAuthority> authorities;
+
     @Column(nullable = true)
     @JsonIgnore
     private String hashedConfirmationToken;
@@ -88,6 +92,7 @@ public class ShortenerUser implements Serializable, UserDetails {
     public ShortenerUser() {
         this.links = new HashSet<>();
         this.userState = Collections.synchronizedSet(EnumSet.noneOf(UserState.class));
+        this.authorities = Collections.synchronizedSet(Set.of());
     }
 
 
@@ -185,7 +190,11 @@ public class ShortenerUser implements Serializable, UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return authorities;
+    }
+
+    public void setAuthorities(Set<GrantedAuthority> authorities) {
+        this.authorities = authorities;
     }
 
     @Override
