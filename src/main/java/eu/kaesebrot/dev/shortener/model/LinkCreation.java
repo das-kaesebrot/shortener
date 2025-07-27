@@ -14,7 +14,7 @@ public class LinkCreation implements Serializable {
 
     @JsonProperty("id")
     @Size(min = 5, max = 32)
-    @Pattern(regexp = "^[a-z0-9-]+$", message = "Id is in wrong format! Has to be 5-32 chars long and only containing lowercase chars, digits or dashes.")
+    @Pattern(regexp = "^[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]$", message = "Id is in wrong format! Has to be 5-32 chars long and only containing lowercase chars, uppercase chars, digits or dashes. Id cannot start or end with a dash.")
     private String id;
 
     public String getRedirectUri() {
