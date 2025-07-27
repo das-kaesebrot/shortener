@@ -1,6 +1,5 @@
 package eu.kaesebrot.dev.shortener.api;
 
-import eu.kaesebrot.dev.shortener.repository.LinkRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -9,22 +8,18 @@ import org.springframework.web.servlet.view.RedirectView;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/s")
+@RequestMapping("/${shortener.hosting.redirect-alias}")
 @Tag(name = "redirect", description = "Alias to the links redirect")
 public class AliasLinkController {
-    private final LinkRepository linkRepository;
+    private final LinkController linkController;
 
-    AliasLinkController(LinkRepository linkRepository) {
-        this.linkRepository = linkRepository;
+    AliasLinkController(LinkController linkController) {
+        this.linkController = linkController;
     }
 
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.FOUND)
     RedirectView redirectShortUri(@PathVariable String id) throws IOException {
-        var link = linkRepository.findById(id).orElseThrow();
-        link.incrementHits();
-        linkRepository.save(link);
-
-        return new RedirectView(link.getRedirectUri().toString());
+        return linkController.redirectShortUri(id);
     }
 }
