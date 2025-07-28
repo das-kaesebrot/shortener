@@ -14,7 +14,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import eu.kaesebrot.dev.shortener.enums.UserState;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -53,15 +52,12 @@ public class ShortenerUser implements UserDetails {
     @JsonProperty("is_locked")
     private boolean locked;
 
+    @JsonProperty("is_enabled")
+    private boolean enabled;
+
     @OneToMany(mappedBy="owner")
     @JsonManagedReference
     private Set<Link> links;
-    
-    @ElementCollection(targetClass = UserState.class)
-    @CollectionTable
-    @Enumerated(EnumType.STRING)
-    @JsonProperty("user_state")
-    private Set<UserState> userState;
 
     @ElementCollection(targetClass = GrantedAuthority.class)
     @CollectionTable
@@ -91,8 +87,8 @@ public class ShortenerUser implements UserDetails {
 
     public ShortenerUser() {
         this.links = new HashSet<>();
-        this.userState = Collections.synchronizedSet(EnumSet.noneOf(UserState.class));
         this.authorities = Collections.synchronizedSet(Set.of());
+        this.enabled = true;
     }
 
 
@@ -129,30 +125,6 @@ public class ShortenerUser implements UserDetails {
         this.links = links;
     }
 
-    public void setState(EnumSet<UserState> userStateSet) {
-        this.userState = userStateSet;
-    }
-    
-    public void addState(UserState userState) {
-        this.userState.add(userState);
-    }
-
-    public void removeState(UserState userState) {
-        this.userState.remove(userState);
-    }
-
-    public void clearState() {
-        this.setState(EnumSet.noneOf(UserState.class));
-    }
-
-    public Set<UserState> getState() {
-        return userState;
-    }
-    
-    public boolean hasState(UserState state) {
-        return userState.contains(state);
-    }
-
     public long getVersion() {
         return version;
     }
@@ -178,13 +150,13 @@ public class ShortenerUser implements UserDetails {
             return;
         }
 
-        addState(UserState.CONFIRMING_EMAIL);
+        this.disableAccount();
         this.hashedConfirmationToken = hashedConfirmationToken;
     }
 
     public void setEmailVerified() {
         this.hashedConfirmationToken = null;
-        removeState(UserState.CONFIRMING_EMAIL);
+        this.enableAccount();
     }
 
 
@@ -199,7 +171,7 @@ public class ShortenerUser implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return accountExpiredAt.before(Timestamp.from(Instant.now()));
+        return accountExpiredAt == null || Timestamp.from(Instant.now()).before(accountExpiredAt);
     }
 
     public void setAccountExpired() {
@@ -214,9 +186,13 @@ public class ShortenerUser implements UserDetails {
         accountExpiredAt = Timestamp.from(instant);
     }
 
+    public void clearAccountExpired() {
+        accountExpiredAt = null;
+    }
+
     @Override
     public boolean isAccountNonLocked() {
-        return locked;
+        return !locked;
     }
 
     public void lockAccount() {
@@ -229,7 +205,7 @@ public class ShortenerUser implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return credentialsExpiredAt.before(Timestamp.from(Instant.now()));
+        return credentialsExpiredAt == null || Timestamp.from(Instant.now()).before(credentialsExpiredAt);
     }
 
     public void setCredentialsExpired() {
@@ -244,9 +220,20 @@ public class ShortenerUser implements UserDetails {
         credentialsExpiredAt = Timestamp.from(instant);
     }
 
+    public void clearCredentialsExpired() {
+        credentialsExpiredAt = null;
+    }
+
+    public void enableAccount() {
+        this.enabled = true;
+    }
+
+    public void disableAccount() {
+        this.enabled = false;
+    }
+
     @Override
     public boolean isEnabled() {
-        // TODO
-        return true;
+        return enabled;
     }
 }
