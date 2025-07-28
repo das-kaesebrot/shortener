@@ -57,8 +57,10 @@ public class UserController {
     }
 
     @GetMapping("{id}/confirm/{token}")
-    void confirmUserAccount(@PathVariable("id") UUID id, @PathVariable("token") String rawToken) {
+    ShortenerUser confirmUserAccount(@PathVariable("id") UUID id, @PathVariable("token") String rawToken) {
         ShortenerUser user = userRepository.findById(id).orElseThrow();
         confirmationTokenService.redeemToken(user, rawToken);
+
+        return userRepository.findById(id).orElseThrow();
     }
 }
