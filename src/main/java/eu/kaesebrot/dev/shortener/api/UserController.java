@@ -78,4 +78,9 @@ public class UserController {
 
         return userRepository.findById(id).orElseThrow();
     }
+
+    @PostMapping("login")
+    AuthResponse loginUserAccount(@Valid @RequestBody AuthRequest request) {
+        return authService.authenticate(request);
+    }
 }
