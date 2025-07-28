@@ -3,6 +3,7 @@ package eu.kaesebrot.dev.shortener.security;
 import eu.kaesebrot.dev.shortener.service.AuthUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -15,7 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import javax.sql.DataSource;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -31,24 +32,15 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.
-                authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/ui", "/api/v1/shortener/links/redirect/**", "/s/*", "/api/swagger-ui/**", "/api/docs/**", "/error", "/ui/assets/**").permitAll()
-                        .requestMatchers("/ui/dashboard/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/ui/dashboard/**").hasRole("USER")
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers(HttpMethod.GET, "/", "/api/v1/shortener/links/redirect/**", "/api/v1/shortener/users/*", "/api/v1/shortener/users/*/confirm/*", "/s/*", "/api/swagger-ui/**", "/api/docs/**", "/error").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/shortener/users/login", "/api/v1/shortener/users").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin((form) -> form
-                        .loginPage("/ui/login")
-                        .failureUrl("/ui/login?error=true")
-                        .loginProcessingUrl("/login")
-                        .permitAll()
-                )
-                .logout((logout) -> logout
-                        .logoutUrl("/ui/logout")
-                        .logoutSuccessUrl("/ui")
-                        .deleteCookies("JSESSIONID")
-                        .permitAll())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .oauth2ResourceServer((oauth2) -> oauth2.jwt(withDefaults()))
         ;
 
         return http.build();
