@@ -2,11 +2,16 @@ package eu.kaesebrot.dev.shortener.api;
 import java.net.URI;
 import java.util.UUID;
 
+import eu.kaesebrot.dev.shortener.model.AuthRequest;
+import eu.kaesebrot.dev.shortener.model.AuthResponse;
+import eu.kaesebrot.dev.shortener.service.AuthService;
+import eu.kaesebrot.dev.shortener.service.AuthUserDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,13 +34,16 @@ import jakarta.validation.Valid;
 public class UserController {
     private final ShortenerUserRepository userRepository;
     private final EmailConfirmationTokenService confirmationTokenService;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final AuthService authService;
+    private final PasswordEncoder passwordEncoder;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    
-    UserController(ShortenerUserRepository userRepository, EmailConfirmationTokenService confirmationTokenService) {
+
+    UserController(ShortenerUserRepository userRepository, EmailConfirmationTokenService confirmationTokenService, AuthService authService, AuthUserDetailsService authUserDetailsService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.confirmationTokenService = confirmationTokenService;
+        this.authService = authService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping
