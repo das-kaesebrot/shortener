@@ -15,12 +15,13 @@ public class AuthUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-        return _userRepository
-                .findByUsername(usernameOrEmail)
-                .orElse(_userRepository
-                        .findByEmail(usernameOrEmail)
-                        .orElseThrow(() -> new UsernameNotFoundException("User not found: " + usernameOrEmail))
-                );
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        var matchedUser = _userRepository.findByUsername(username);
+
+        if (matchedUser.isEmpty()) {
+            matchedUser = _userRepository.findByEmail(username);
+        }
+
+        return matchedUser.orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
 }
