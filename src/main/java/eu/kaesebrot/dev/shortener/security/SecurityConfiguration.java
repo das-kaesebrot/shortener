@@ -1,6 +1,7 @@
 package eu.kaesebrot.dev.shortener.security;
 
 import eu.kaesebrot.dev.shortener.service.AuthUserDetailsService;
+ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,6 +25,10 @@ public class SecurityConfiguration {
 
     private final AuthUserDetailsService _authUserDetailsService;
     private final BCryptPasswordEncoder _passwordEncoder;
+
+    // TODO
+    @Value("${shortener.hosting.subdirectory:}")
+    private final String subdirectory = "";
 
     public SecurityConfiguration(AuthUserDetailsService authUserDetailsService) {
         _authUserDetailsService = authUserDetailsService;

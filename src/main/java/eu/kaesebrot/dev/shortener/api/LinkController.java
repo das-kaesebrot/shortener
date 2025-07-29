@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
-@RequestMapping("api/v1/links")
+@RequestMapping("${shortener.hosting.subdirectory:}/api/v1/links")
 @Tag(name = "links", description = "The Link API")
 public class LinkController {
     private final LinkRepository linkRepository;

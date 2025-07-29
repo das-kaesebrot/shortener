@@ -26,7 +26,7 @@ import jakarta.validation.Valid;
 
 
 @RestController
-@RequestMapping("api/v1/auth")
+@RequestMapping("${shortener.hosting.subdirectory:}/api/v1/auth")
 @Tag(name = "auth", description = "The auth API")
 public class AuthController {
     private final ShortenerUserRepository userRepository;
