@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 
-public class AuthResponse implements Serializable {
+public class AuthResponseBase implements Serializable {
     @NotNull
     @JsonProperty("jwt")
     private String jwt;
@@ -18,9 +18,9 @@ public class AuthResponse implements Serializable {
     @JsonProperty("expires_at")
     private Long expiresAt;
 
-    public AuthResponse() {}
+    public AuthResponseBase() {}
 
-    public AuthResponse(String jwt, String principalName, Long expiresAt) {
+    public AuthResponseBase(String jwt, String principalName, Long expiresAt) {
         this.jwt = jwt;
         this.principalName = principalName;
         this.expiresAt = expiresAt;

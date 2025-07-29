@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 
-public class AuthRequest implements Serializable {
+public class AuthRequestInitial implements Serializable {
     @NotNull
     @JsonProperty("username")
     private String username;
@@ -14,9 +14,9 @@ public class AuthRequest implements Serializable {
     @JsonProperty("password")
     private String password;
 
-    public AuthRequest() {}
+    public AuthRequestInitial() {}
 
-    public AuthRequest(String username, String password) {
+    public AuthRequestInitial(String username, String password) {
         this();
         this.username = username;
         this.password = password;

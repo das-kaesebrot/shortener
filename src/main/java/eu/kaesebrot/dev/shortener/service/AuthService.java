@@ -1,7 +1,7 @@
 package eu.kaesebrot.dev.shortener.service;
 
-import eu.kaesebrot.dev.shortener.model.AuthRequest;
-import eu.kaesebrot.dev.shortener.model.AuthResponse;
+import eu.kaesebrot.dev.shortener.model.AuthRequestInitial;
+import eu.kaesebrot.dev.shortener.model.AuthResponseBase;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,13 +17,13 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public AuthResponse authenticate(AuthRequest authRequest) {
-        var token = new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword());
+    public AuthResponseBase authenticate(AuthRequestInitial authRequestInitial) {
+        var token = new UsernamePasswordAuthenticationToken(authRequestInitial.getUsername(), authRequestInitial.getPassword());
         Authentication authentication = authenticationManager.authenticate(token);
 
         String jwt = jwtService.generateToken(authentication);
         Long expiresAt = jwtService.extractExpirationTime(jwt);
 
-        return new AuthResponse(jwt, authentication.getName(), expiresAt);
+        return new AuthResponseBase(jwt, authentication.getName(), expiresAt);
     }
 }
