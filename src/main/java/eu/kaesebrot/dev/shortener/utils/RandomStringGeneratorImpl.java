@@ -10,7 +10,7 @@ public class RandomStringGeneratorImpl implements RandomStringGenerator {
     private final SecureRandom secureRandom = new SecureRandom();
 
     private final String RAND_ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-    private final int TOKEN_BYTES = 32;
+    private final int TOKEN_LENGTH = 64;
 
     @Override
     public String generate(int length) {
@@ -30,8 +30,13 @@ public class RandomStringGeneratorImpl implements RandomStringGenerator {
 
     @Override
     public String generateHexToken() {
+        return generateHexToken(TOKEN_LENGTH);
+    }
+
+    @Override
+    public String generateHexToken(int length) {
         // generate 32 Byte -> 64 hex chars
-        byte[] seed = secureRandom.generateSeed(TOKEN_BYTES);
-        return HexFormat.of().formatHex(seed);
+        byte[] seed = secureRandom.generateSeed((int) Math.ceil(length / 2.0));
+        return HexFormat.of().formatHex(seed).substring(0, length);
     }
 }
