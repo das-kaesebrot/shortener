@@ -2,8 +2,7 @@ package eu.kaesebrot.dev.shortener.api;
 import java.net.URI;
 import java.util.UUID;
 
-import eu.kaesebrot.dev.shortener.model.AuthRequest;
-import eu.kaesebrot.dev.shortener.model.AuthResponse;
+import eu.kaesebrot.dev.shortener.model.*;
 import eu.kaesebrot.dev.shortener.service.AuthService;
 import eu.kaesebrot.dev.shortener.service.AuthUserDetailsService;
 import org.slf4j.Logger;
@@ -19,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import eu.kaesebrot.dev.shortener.model.ShortenerUser;
-import eu.kaesebrot.dev.shortener.model.UserCreation;
 import eu.kaesebrot.dev.shortener.repository.ShortenerUserRepository;
 import eu.kaesebrot.dev.shortener.service.EmailConfirmationTokenService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -80,7 +77,17 @@ public class UserController {
     }
 
     @PostMapping("login")
-    AuthResponse loginUserAccount(@Valid @RequestBody AuthRequest request) {
-        return authService.authenticate(request);
+    AuthResponseInitial getJwt(@Valid @RequestBody AuthRequestInitial request) {
+        AuthResponseBase responseBase = authService.authenticate(request);
+
+        // TODO
+        String rawRefreshToken = "token";
+        passwordEncoder.encode(rawRefreshToken);
+        return new AuthResponseInitial(responseBase, rawRefreshToken);
+    }
+
+    @PostMapping("refresh")
+    AuthResponseRefresh refreshJwt(@Valid @RequestBody AuthRequestRefresh request) {
+        return null;
     }
 }
