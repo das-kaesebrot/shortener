@@ -29,10 +29,20 @@ class RandomStringGeneratorTests {
 
 	@Test
 	@DisplayName("Generate correct length token")
-	void whenGenerateToken_thenGenerateHexTokenInExpectedLength() {
+	void whenGenerateTokenWithoutLength_thenGenerateHexTokenInExpectedLength() {
 		var generatedString = randomStringGenerator.generateHexToken();
-		
+
 		assertEquals(64, generatedString.length());
+		assertTrue(Pattern.matches("^[a-f0-9]+$", generatedString));
+	}
+
+	@Test
+	@DisplayName("Generate correct length token")
+	void whenGenerateTokenWithLength_thenGenerateHexTokenInExpectedLength() {
+		int expectedLength = 127;
+		var generatedString = randomStringGenerator.generateHexToken(127);
+
+		assertEquals(expectedLength, generatedString.length());
 		assertTrue(Pattern.matches("^[a-f0-9]+$", generatedString));
 	}
 }
