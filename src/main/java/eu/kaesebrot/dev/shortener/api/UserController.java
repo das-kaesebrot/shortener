@@ -29,8 +29,8 @@ import jakarta.validation.Valid;
 
 
 @RestController
-@RequestMapping("/api/v1/shortener/users")
-@Tag(name = "users", description = "The User API")
+@RequestMapping("api/v1/auth")
+@Tag(name = "auth", description = "The auth API")
 public class UserController {
     private final ShortenerUserRepository userRepository;
     private final EmailConfirmationTokenService confirmationTokenService;
@@ -46,7 +46,7 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PostMapping
+    @PostMapping("users")
     ShortenerUser registerUser(HttpServletRequest request, @Valid @RequestBody UserCreation userCreation) {
 
         if (userRepository.existsByEmail(userCreation.getEmail()) || userRepository.existsByUsername(userCreation.getUsername())) {
@@ -61,17 +61,17 @@ public class UserController {
         return user;
     }
 
-    @GetMapping("{id}")
+    @GetMapping("users/{id}")
     ShortenerUser getUser(@PathVariable UUID id) {
         return userRepository.findById(id).orElseThrow();
     }
 
-    @GetMapping
+    @GetMapping("users")
     Page<ShortenerUser> getUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
-    @GetMapping("{id}/confirm/{token}")
+    @GetMapping("users/{id}/confirm/{token}")
     ShortenerUser confirmUserAccount(@PathVariable("id") UUID id, @PathVariable("token") String rawToken) {
         ShortenerUser user = userRepository.findById(id).orElseThrow();
         confirmationTokenService.redeemToken(user, rawToken);
