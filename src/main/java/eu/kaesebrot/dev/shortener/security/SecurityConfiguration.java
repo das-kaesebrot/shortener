@@ -35,8 +35,16 @@ public class SecurityConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(HttpMethod.GET, "/", "/api/v1/shortener/links/redirect/**", "/api/v1/shortener/users/*", "/api/v1/shortener/users/*/confirm/*", "/s/*", "/api/swagger-ui/**", "/api/docs/**", "/error").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/shortener/users/login", "/api/v1/shortener/users").permitAll()
+                        // API docs, error paths
+                        .requestMatchers(HttpMethod.GET, "/api/swagger-ui/**", "/api/docs/**", "/error").permitAll()
+                        // shortlink resolution
+                        .requestMatchers(HttpMethod.GET, "/api/v1/links/*/redirect", "/s/*").permitAll()
+                        // user account confirmation via secret token
+                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/users/*/confirm/*").permitAll()
+                        // user account creation
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/users").permitAll()
+                        // jwt retrieval and refresh
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/refresh").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
