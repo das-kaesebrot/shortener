@@ -1,7 +1,5 @@
 package eu.kaesebrot.dev.shortener.api;
 import java.io.IOException;
-import java.util.Set;
-import java.util.HashSet;
 
 import eu.kaesebrot.dev.shortener.exceptions.LinkNotFoundException;
 import eu.kaesebrot.dev.shortener.model.Link;
@@ -12,6 +10,8 @@ import eu.kaesebrot.dev.shortener.utils.StringUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
@@ -29,8 +29,8 @@ public class LinkController {
     }
 
     @GetMapping
-    Set<Link> getAllLinks() {
-        return new HashSet<>(linkRepository.findAll());
+    Page<Link> getAllLinks(Pageable pageable) {
+        return linkRepository.findAll(pageable);
     }
 
     @PostMapping
