@@ -24,3 +24,10 @@ jobs:
         uses: gradle/gradle-build-action@v3
       - name: Build project
         run: ./gradlew test
+      - name: Test report
+        uses: dorny/test-reporter@v2
+        if: ${{ !cancelled() }}
+        with:
+          name: Test results
+          path: build/test-results/test/TEST-*.xml
+          reporter: java-junit
