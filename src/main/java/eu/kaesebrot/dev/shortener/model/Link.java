@@ -32,7 +32,7 @@ public class Link implements Serializable {
     @JoinColumn
     (name = "owner_id")
     @JsonBackReference
-    private ShortenerUser owner;
+    private AuthUser owner;
 
     @CreationTimestamp
     @Column(nullable = false)
@@ -48,7 +48,7 @@ public class Link implements Serializable {
         this.hits = 0;
     }
 
-    public Link(String shortUri, URI redirectUri, ShortenerUser owner) {
+    public Link(String shortUri, URI redirectUri, AuthUser owner) {
         this();
         this.id = shortUri;
         if (StringUtils.isNullOrEmpty(redirectUri.getScheme())) {
@@ -60,7 +60,7 @@ public class Link implements Serializable {
         this.owner = owner;
     }
 
-    public Link(String shortUri, String redirectUri, ShortenerUser owner) {
+    public Link(String shortUri, String redirectUri, AuthUser owner) {
         this(shortUri, URI.create(redirectUri), owner);
     }
     
@@ -92,11 +92,11 @@ public class Link implements Serializable {
         return hits;
     }
 
-    public ShortenerUser getOwner() {
+    public AuthUser getOwner() {
         return owner;
     }
 
-    public void setOwner(ShortenerUser owner) {
+    public void setOwner(AuthUser owner) {
         this.owner = owner;
     }
 

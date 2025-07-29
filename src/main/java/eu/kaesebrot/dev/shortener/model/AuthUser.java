@@ -19,7 +19,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
-public class ShortenerUser implements UserDetails, CredentialsContainer {
+public class AuthUser implements UserDetails, CredentialsContainer {
     @Version
     @JsonIgnore
     private long version;
@@ -79,14 +79,14 @@ public class ShortenerUser implements UserDetails, CredentialsContainer {
     @JsonProperty("modified_at")
     private Timestamp modifiedAt;
 
-    public ShortenerUser(@NotBlank String username, @NotBlank String passwordHash, String email) {
+    public AuthUser(@NotBlank String username, @NotBlank String passwordHash, String email) {
         this();
         this.username = username;
         this.passwordHash = passwordHash;
         this.email = email;
     }
 
-    public ShortenerUser() {
+    public AuthUser() {
         this.links = new HashSet<>();
         this.authorities = Collections.synchronizedSet(Set.of());
         this.enabled = true;

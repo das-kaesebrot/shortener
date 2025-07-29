@@ -44,13 +44,13 @@ public class AuthController {
     }
 
     @PostMapping("users")
-    ShortenerUser registerUser(HttpServletRequest request, @Valid @RequestBody AuthUserCreationRequest authUserCreationRequest) {
+    AuthUser registerUser(HttpServletRequest request, @Valid @RequestBody AuthUserCreationRequest authUserCreationRequest) {
 
         if (userRepository.existsByEmail(authUserCreationRequest.getEmail()) || userRepository.existsByUsername(authUserCreationRequest.getUsername())) {
             throw new IllegalArgumentException("User already exists!");
         }
 
-        ShortenerUser user = new ShortenerUser(authUserCreationRequest.getUsername(), passwordEncoder.encode(authUserCreationRequest.getRawPassword()), authUserCreationRequest.getEmail());
+        AuthUser user = new AuthUser(authUserCreationRequest.getUsername(), passwordEncoder.encode(authUserCreationRequest.getRawPassword()), authUserCreationRequest.getEmail());
         userRepository.save(user);
         
         confirmationTokenService.generateAndSendConfirmationTokenToUser(user, URI.create(request.getRequestURL().toString()), String.format("api/v1/shortener/users/%s/confirm", user.getId().toString()));
@@ -59,18 +59,18 @@ public class AuthController {
     }
 
     @GetMapping("users/{id}")
-    ShortenerUser getUser(@PathVariable UUID id) {
+    AuthUser getUser(@PathVariable UUID id) {
         return userRepository.findById(id).orElseThrow();
     }
 
     @GetMapping("users")
-    Page<ShortenerUser> getUsers(Pageable pageable) {
+    Page<AuthUser> getUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
     @GetMapping("users/{id}/confirm/{token}")
-    ShortenerUser confirmUserAccount(@PathVariable("id") UUID id, @PathVariable("token") String rawToken) {
-        ShortenerUser user = userRepository.findById(id).orElseThrow();
+    AuthUser confirmUserAccount(@PathVariable("id") UUID id, @PathVariable("token") String rawToken) {
+        AuthUser user = userRepository.findById(id).orElseThrow();
         confirmationTokenService.redeemToken(user, rawToken);
 
         return userRepository.findById(id).orElseThrow();

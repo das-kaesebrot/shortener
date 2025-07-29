@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import eu.kaesebrot.dev.shortener.model.ShortenerUser;
+import eu.kaesebrot.dev.shortener.model.AuthUser;
 import eu.kaesebrot.dev.shortener.repository.ShortenerUserRepository;
 import eu.kaesebrot.dev.shortener.utils.RandomStringGenerator;
 
@@ -29,8 +29,8 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
     }
 
     @Override
-    public void generateAndSendConfirmationTokenToUser(ShortenerUser user, URI originalRequestUri,
-            String tokenConfirmationPath) {
+    public void generateAndSendConfirmationTokenToUser(AuthUser user, URI originalRequestUri,
+                                                       String tokenConfirmationPath) {
         String rawToken = randomStringGenerator.generateHexToken();
         user.updateHashedConfirmationToken(passwordEncoder.encode(rawToken));
         shortenerUserRepository.save(user);
@@ -51,7 +51,7 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
     }
 
     @Override
-    public void redeemToken(ShortenerUser user, String rawToken) {
+    public void redeemToken(AuthUser user, String rawToken) {
         if (!passwordEncoder.matches(rawToken, user.getHashedConfirmationToken())) {
             throw new IllegalArgumentException("Token doesn't match!");
         }
