@@ -8,7 +8,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/${shortener.hosting.redirect-alias}")
+@RequestMapping("${shortener.hosting.redirect-alias}")
 @Tag(name = "redirect", description = "Alias to the links redirect")
 public class AliasLinkController {
     private final LinkController linkController;
