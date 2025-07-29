@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("api/v1/auth")
 @Tag(name = "auth", description = "The auth API")
-public class UserController {
+public class AuthController {
     private final ShortenerUserRepository userRepository;
     private final EmailConfirmationTokenService confirmationTokenService;
     private final AuthService authService;
@@ -36,7 +36,7 @@ public class UserController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    UserController(ShortenerUserRepository userRepository, EmailConfirmationTokenService confirmationTokenService, AuthService authService, AuthUserDetailsService authUserDetailsService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    AuthController(ShortenerUserRepository userRepository, EmailConfirmationTokenService confirmationTokenService, AuthService authService, AuthUserDetailsService authUserDetailsService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.confirmationTokenService = confirmationTokenService;
         this.authService = authService;
