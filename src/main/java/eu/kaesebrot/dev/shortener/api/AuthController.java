@@ -44,13 +44,13 @@ public class AuthController {
     }
 
     @PostMapping("users")
-    ShortenerUser registerUser(HttpServletRequest request, @Valid @RequestBody UserCreation userCreation) {
+    ShortenerUser registerUser(HttpServletRequest request, @Valid @RequestBody AuthUserCreationRequest authUserCreationRequest) {
 
-        if (userRepository.existsByEmail(userCreation.getEmail()) || userRepository.existsByUsername(userCreation.getUsername())) {
+        if (userRepository.existsByEmail(authUserCreationRequest.getEmail()) || userRepository.existsByUsername(authUserCreationRequest.getUsername())) {
             throw new IllegalArgumentException("User already exists!");
         }
 
-        ShortenerUser user = new ShortenerUser(userCreation.getUsername(), passwordEncoder.encode(userCreation.getRawPassword()), userCreation.getEmail());
+        ShortenerUser user = new ShortenerUser(authUserCreationRequest.getUsername(), passwordEncoder.encode(authUserCreationRequest.getRawPassword()), authUserCreationRequest.getEmail());
         userRepository.save(user);
         
         confirmationTokenService.generateAndSendConfirmationTokenToUser(user, URI.create(request.getRequestURL().toString()), String.format("api/v1/shortener/users/%s/confirm", user.getId().toString()));
