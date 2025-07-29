@@ -14,11 +14,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
-public class ShortenerUser implements UserDetails {
+public class ShortenerUser implements UserDetails, CredentialsContainer {
     @Version
     @JsonIgnore
     private long version;
@@ -235,5 +236,10 @@ public class ShortenerUser implements UserDetails {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    @Override
+    public void eraseCredentials() {
+        this.passwordHash = null;
     }
 }
