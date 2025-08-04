@@ -69,7 +69,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     @Transactional
-    public long deleteExpiredRefreshTokens() {
-        return refreshTokenRepository.deleteByExpiresAtBefore(Instant.now());
+    @Scheduled(cron = "${shortener.jwt.cleanup-interval:* * * * *}")
+    public void deleteExpiredRefreshTokens() {
+        logger.debug("Cleaning expired refresh tokens");
+        long deletedTokens = refreshTokenRepository.deleteByExpiresAtBefore(Instant.now());
+        logger.debug(String.format("Deleted %d tokens", deletedTokens));
     }
 }
