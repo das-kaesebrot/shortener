@@ -5,6 +5,7 @@ import eu.kaesebrot.dev.shortener.model.AuthUser;
 import eu.kaesebrot.dev.shortener.model.Link;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -28,12 +29,14 @@ public class AuthUserResponse implements Serializable {
     private boolean enabled;
     @JsonProperty("links")
     private List<String> linkIds;
+    @JsonProperty("granted_authorities")
+    private List<String> grantedAuthorities;
     @JsonProperty("created_at")
     private Instant createdAt;
     @JsonProperty("modified_at")
     private Instant modifiedAt;
 
     public static AuthUserResponse fromAuthUser(AuthUser authUser) {
-        return new AuthUserResponse(authUser.getVersion(), authUser.getId(), authUser.getUsername(), authUser.getEmail(), authUser.getAccountExpiredAt(), authUser.getCredentialsExpiredAt(), authUser.isLocked(), authUser.isEnabled(), authUser.getLinks().stream().map(Link::getId).toList(), authUser.getCreatedAt(), authUser.getModifiedAt());
+        return new AuthUserResponse(authUser.getVersion(), authUser.getId(), authUser.getUsername(), authUser.getEmail(), authUser.getAccountExpiredAt(), authUser.getCredentialsExpiredAt(), authUser.isLocked(), authUser.isEnabled(), authUser.getLinks().stream().map(Link::getId).toList(), authUser.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList(), authUser.getCreatedAt(), authUser.getModifiedAt());
     }
 }
