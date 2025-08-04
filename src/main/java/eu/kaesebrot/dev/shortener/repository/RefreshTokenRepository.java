@@ -12,4 +12,6 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
     List<RefreshToken> findByUserAndExpiresAtAfter(AuthUser user, Instant expiresAtAfter);
     List<RefreshToken> findByUserUsernameAndExpiresAtAfter(@NotBlank String username, Instant expiresAt);
     long deleteByExpiresAtBefore(Instant expiresAt);
+    long deleteByUserUsername(String username);
+    long deleteByUser(AuthUser user);
 }
