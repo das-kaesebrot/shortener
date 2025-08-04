@@ -27,6 +27,7 @@ public class JwtConfig {
     private RSAPrivateKey privateKey;
     private RSAPublicKey publicKey;
     private Duration ttl;
+    private Duration refreshTokenTtl;
 
     @Bean
     public JwtEncoder jwtEncoder() {
