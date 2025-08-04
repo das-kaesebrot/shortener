@@ -10,7 +10,7 @@ import eu.kaesebrot.dev.shortener.model.dto.response.AuthResponseInitial;
 import eu.kaesebrot.dev.shortener.model.dto.response.AuthResponseRefresh;
 import eu.kaesebrot.dev.shortener.model.dto.response.AuthUserResponse;
 import eu.kaesebrot.dev.shortener.service.AuthService;
-import jakarta.annotation.Nullable;
+import eu.kaesebrot.dev.shortener.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +42,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final RefreshTokenService refreshTokenService;
 
     @PostMapping("users")
     @Transactional
@@ -112,8 +113,14 @@ public class AuthController {
     }
 
     @PostMapping("logout")
-    public ResponseEntity logoutUser(final Authentication authentication) {
-        // TODO
-        return ResponseEntity.ok(null);
+    public ResponseEntity revokeSingleRefreshToken(final Authentication authentication, @Valid @RequestBody AuthRequestRefresh request) {
+        refreshTokenService.deleteRefreshTokenByRawToken(authentication.getName(), request.refreshToken());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("revoke")
+    public ResponseEntity revokeAllRefreshTokens(final Authentication authentication) {
+        refreshTokenService.deleteAllRefreshTokensOfUser(authentication.getName());
+        return ResponseEntity.noContent().build();
     }
 }
