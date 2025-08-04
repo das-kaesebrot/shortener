@@ -5,4 +5,4 @@ import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 
-public record AuthRequestRefresh(@NotNull @JsonProperty("refresh_token") String refreshToken) implements Serializable {}
+public record AuthRequestRefresh(@NotNull @JsonProperty("username") String username, @NotNull @JsonProperty("refresh_token") String refreshToken) implements Serializable {}
