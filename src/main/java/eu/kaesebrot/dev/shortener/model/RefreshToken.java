@@ -15,7 +15,7 @@ import java.time.Instant;
 @EntityListeners(AuditingEntityListener.class)
 public class RefreshToken {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
     @Column(updatable = false, nullable = false)
     private Long id;
 
