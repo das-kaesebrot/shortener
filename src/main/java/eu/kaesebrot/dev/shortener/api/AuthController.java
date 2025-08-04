@@ -68,6 +68,22 @@ public class AuthController {
         return ResponseEntity.ok(userRepository.findAll(pageable));
     }
 
+    @GetMapping("users/me")
+    public ResponseEntity<AuthUser> getSelf(final Authentication authentication) {
+        AuthUser user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found"));
+
+        return ResponseEntity.ok(user);
+    }
+
+    @DeleteMapping("users/me")
+    public ResponseEntity deleteSelf(final Authentication authentication) {
+        long deletedUsers = userRepository.removeByUsername(authentication.getName());
+        if (deletedUsers <= 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found");
+        }
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("users/{id}/confirm/{token}")
     public ResponseEntity<AuthUser> confirmUserAccount(@PathVariable("id") UUID id, @PathVariable("token") String rawToken) {
         AuthUser user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found"));
@@ -88,6 +104,12 @@ public class AuthController {
 
     @PostMapping("refresh")
     public ResponseEntity<AuthResponseRefresh> refreshJwt(@Valid @RequestBody AuthRequestRefresh request) {
+        return ResponseEntity.ok(null);
+    }
+
+    @PostMapping("logout")
+    public ResponseEntity logoutUser(final Authentication authentication) {
+        // TODO
         return ResponseEntity.ok(null);
     }
 }
