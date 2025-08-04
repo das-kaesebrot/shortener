@@ -24,8 +24,8 @@ public class JwtService {
                 .subject(authentication.getName())
                 .claim("authorities", authentication.getAuthorities())
                 .build();
-        var encoderParameters = JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS256).build(), claims);
-        return this.encoder.encode(encoderParameters).getTokenValue();
+        var encoderParameters = JwtEncoderParameters.from(claims);
+        return encoder.encode(encoderParameters).getTokenValue();
     }
 
     public Long extractExpirationTime(String token) {
