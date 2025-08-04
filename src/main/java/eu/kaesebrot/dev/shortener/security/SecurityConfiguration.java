@@ -16,11 +16,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
+import static org.springframework.security.oauth2.core.authorization.OAuth2AuthorizationManagers.hasScope;
 
 @Configuration
 @EnableWebSecurity
@@ -40,14 +43,28 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((requests) -> requests
                         // API docs, error paths
                         .requestMatchers(HttpMethod.GET, "/api/swagger-ui/**", "/api/docs/**", "/error").permitAll()
-                        // shortlink resolution
-                        .requestMatchers(HttpMethod.GET, "/api/v1/links/*/redirect", "/s/*").permitAll()
+                        //
+                        // --- AUTH controller ---
+                        //
                         // user account confirmation via secret token
                         .requestMatchers(HttpMethod.GET, "/api/v1/auth/users/*/confirm/*").permitAll()
                         // user account creation
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/users").permitAll()
                         // jwt retrieval and refresh
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/refresh").permitAll()
+                        // self management
+                        .requestMatchers("/api/v1/auth/me").access(hasScope("self"))
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/logout", "/api/v1/auth/revoke").access(hasScope("self.logout"))
+                        // admin management
+                        .requestMatchers(HttpMethod.GET, "/api/api/v1/auth/users/*").access(hasScope("users.read"))
+                        .requestMatchers(HttpMethod.DELETE, "/api/api/v1/auth/users/*").access(hasScope("users.write"))
+                        //
+                        // --- LINKS controller ---
+                        //
+                        // shortlink resolution
+                        .requestMatchers(HttpMethod.GET, "/api/v1/links/*/redirect", "/s/*").permitAll()
+                        // link management
+                        .requestMatchers("/api/v1/links/*").access(hasScope("links"))
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
