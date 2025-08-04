@@ -1,9 +1,11 @@
 package eu.kaesebrot.dev.shortener.api;
 import java.util.UUID;
 
+import eu.kaesebrot.dev.shortener.model.AuthUser;
 import eu.kaesebrot.dev.shortener.model.Link;
 import eu.kaesebrot.dev.shortener.model.dto.request.LinkRequestCreation;
 import eu.kaesebrot.dev.shortener.model.dto.response.LinkResponse;
+import eu.kaesebrot.dev.shortener.repository.AuthUserRepository;
 import eu.kaesebrot.dev.shortener.repository.LinkRepository;
 import eu.kaesebrot.dev.shortener.utils.AuthUtils;
 import eu.kaesebrot.dev.shortener.utils.RandomStringGenerator;
@@ -41,6 +43,7 @@ import org.springframework.web.servlet.view.RedirectView;
 public class LinkController {
     private final LinkRepository linkRepository;
     private final RandomStringGenerator randomStringGenerator;
+    private final AuthUserRepository authUserRepository;
 
     @GetMapping
     @SecurityRequirement(name = "Authorization")
@@ -56,22 +59,25 @@ public class LinkController {
     }
 
     @PostMapping
-    Link createSingleLink(@Valid @RequestBody LinkRequestCreation linkRequestCreation) {
+    @Transactional
+    @SecurityRequirement(name = "Authorization")
+    @PreAuthorize("hasAuthority('SCOPE_links')")
+    public ResponseEntity<LinkResponse> createSingleLink(@Valid @RequestBody LinkRequestCreation linkRequestCreation, final Authentication authentication) {
         String linkId = linkRequestCreation.getId();
 
         if (StringUtils.isNullOrEmpty(linkId)) {
             do {
                 linkId = randomStringGenerator.generate(5);
-            } while (linkRepository.existsById(linkId));
-        } else if (linkRepository.existsById(linkId)) {
-            throw new IllegalArgumentException(String.format("Link with id %s already exists!", linkId));
+            } while (linkRepository.existsByShortUri(linkId));
+        } else if (linkRepository.existsByShortUri(linkId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Link with id %s already exists!", linkId));
         }
 
-        Link link = new Link(linkId, linkRequestCreation.getRedirectUri(), null);
-
+        final AuthUser owner = authUserRepository.findByUsername(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User could not be found!"));
+        Link link = new Link(linkId, linkRequestCreation.getRedirectUri(), owner);
         linkRepository.save(link);
 
-        return link;
+        return ResponseEntity.ok(link.toDto());
     }
 
     @GetMapping("{id}")
