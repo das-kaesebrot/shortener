@@ -1,10 +1,11 @@
 package eu.kaesebrot.dev.shortener.api;
-import java.io.IOException;
+import java.util.UUID;
 
-import eu.kaesebrot.dev.shortener.exceptions.LinkNotFoundException;
 import eu.kaesebrot.dev.shortener.model.Link;
 import eu.kaesebrot.dev.shortener.model.dto.request.LinkRequestCreation;
+import eu.kaesebrot.dev.shortener.model.dto.response.LinkResponse;
 import eu.kaesebrot.dev.shortener.repository.LinkRepository;
+import eu.kaesebrot.dev.shortener.utils.AuthUtils;
 import eu.kaesebrot.dev.shortener.utils.RandomStringGenerator;
 import eu.kaesebrot.dev.shortener.utils.StringUtils;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
@@ -18,7 +19,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
@@ -37,8 +43,16 @@ public class LinkController {
     private final RandomStringGenerator randomStringGenerator;
 
     @GetMapping
-    Page<Link> getAllLinks(Pageable pageable) {
-        return linkRepository.findAll(pageable);
+    @SecurityRequirement(name = "Authorization")
+    @PreAuthorize("hasAuthority('SCOPE_links')")
+    ResponseEntity<Page<LinkResponse>> getAllLinks(@Valid @RequestParam Pageable pageable, final Authentication authentication) {
+        boolean isAdmin = AuthUtils.hasScope(authentication, "SCOPE_links_admin");
+
+        if (isAdmin) {
+            return ResponseEntity.ok(linkRepository.findAll(pageable).map(Link::toDto));
+        }
+
+        return ResponseEntity.ok(linkRepository.findLinksByOwnerUsername(authentication.getName(), pageable).map(Link::toDto));
     }
 
     @PostMapping
