@@ -24,10 +24,13 @@ public class Link implements Serializable {
     private long version;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(updatable = false, nullable = false)
-    private String id;
+    private UUID Id;
 
-    @JsonProperty("redirect_uri")
+    @Column(unique = true, nullable = false)
+    private String shortUri;
+
     private URI redirectUri;
 
     @NotNull
@@ -56,7 +59,7 @@ public class Link implements Serializable {
 
     public Link(String shortUri, URI redirectUri, AuthUser owner) {
         this();
-        this.id = shortUri;
+        this.shortUri = shortUri;
         setRedirectUri(redirectUri);
         this.owner = owner;
     }
