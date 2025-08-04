@@ -18,7 +18,7 @@ public class JwtService {
     public String generateToken(Authentication authentication) {
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
+                .issuer(issuer)
                 .issuedAt(now)
                 .expiresAt(now.plus(tokenLifeTime))
                 .subject(authentication.getName())
