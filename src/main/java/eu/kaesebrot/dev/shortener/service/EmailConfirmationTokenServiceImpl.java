@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import eu.kaesebrot.dev.shortener.model.AuthUser;
 import eu.kaesebrot.dev.shortener.repository.ShortenerUserRepository;
 import eu.kaesebrot.dev.shortener.utils.RandomStringGenerator;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -55,6 +56,7 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
     }
 
     @Override
+    @Transactional
     public void redeemToken(AuthUser user, String rawToken) {
         if (!verficationRequired) return;
 
