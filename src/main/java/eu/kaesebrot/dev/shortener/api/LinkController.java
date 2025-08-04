@@ -7,6 +7,10 @@ import eu.kaesebrot.dev.shortener.model.dto.request.LinkRequestCreation;
 import eu.kaesebrot.dev.shortener.repository.LinkRepository;
 import eu.kaesebrot.dev.shortener.utils.RandomStringGenerator;
 import eu.kaesebrot.dev.shortener.utils.StringUtils;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -20,6 +24,13 @@ import org.springframework.web.servlet.view.RedirectView;
 @RestController
 @RequestMapping("${shortener.hosting.subdirectory:}/api/v1/links")
 @Tag(name = "links", description = "The Link API")
+@SecurityScheme(
+        name = "Authorization",
+        scheme = "Bearer",
+        bearerFormat = "JWT",
+        type = SecuritySchemeType.HTTP,
+        in = SecuritySchemeIn.HEADER
+)
 @RequiredArgsConstructor
 public class LinkController {
     private final LinkRepository linkRepository;
