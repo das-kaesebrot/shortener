@@ -54,6 +54,15 @@ public class AuthController {
         return ResponseEntity.ok(userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found")));
     }
 
+    @DeleteMapping("users/{id}")
+    public ResponseEntity deleteUser(@PathVariable UUID id) {
+        long deletedUsers = userRepository.removeById(id);
+        if (deletedUsers <= 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found");
+        }
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("users")
     public ResponseEntity<Page<AuthUser>> getUsers(Pageable pageable) {
         return ResponseEntity.ok(userRepository.findAll(pageable));
