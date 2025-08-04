@@ -41,11 +41,11 @@ public class AuthController {
     @PostMapping("users")
     AuthUser registerUser(HttpServletRequest request, @Valid @RequestBody AuthUserCreationRequest authUserCreationRequest) {
 
-        if (userRepository.existsByEmail(authUserCreationRequest.getEmail()) || userRepository.existsByUsername(authUserCreationRequest.getUsername())) {
+        if (userRepository.existsByEmail(authUserCreationRequest.email()) || userRepository.existsByUsername(authUserCreationRequest.username())) {
             throw new IllegalArgumentException("User already exists!");
         }
 
-        AuthUser user = new AuthUser(authUserCreationRequest.getUsername(), passwordEncoder.encode(authUserCreationRequest.getRawPassword()), authUserCreationRequest.getEmail());
+        AuthUser user = new AuthUser(authUserCreationRequest.username(), passwordEncoder.encode(authUserCreationRequest.username()), authUserCreationRequest.email());
         userRepository.save(user);
         
         confirmationTokenService.generateAndSendConfirmationTokenToUser(user, URI.create(request.getRequestURL().toString()), String.format("api/v1/shortener/users/%s/confirm", user.getId().toString()));

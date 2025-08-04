@@ -8,22 +8,19 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-public class AuthUserCreationRequest implements Serializable {
-    @NotNull
-    @Size(min = 5, max = 32)
-    @Pattern(regexp = "^[a-z0-9-]+$", message = "Username is in wrong format! Has to be 5-32 chars long and only containing lowercase chars, digits or dashes.")
-    @JsonProperty("username")
-    private String username;
-
-    @JsonProperty("password")
-    private String rawPassword;
-
-    @JsonProperty("email")
-    @Email
-    private String email;
+public record AuthUserCreationRequest(
+        @NotNull
+        @Size(min = 5, max = 32)
+        @Pattern(regexp = "^[a-z0-9-]+$", message = "Username is in wrong format! Has to be 5-32 chars long and only containing lowercase chars, digits or dashes.")
+        @JsonProperty("username")
+        String username,
+        @NotNull
+        @JsonProperty("password")
+        String rawPassword,
+        @NotNull
+        @JsonProperty("email")
+        @Email
+        String email
+) implements Serializable {
 }
