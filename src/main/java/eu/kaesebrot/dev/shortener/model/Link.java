@@ -1,13 +1,11 @@
 package eu.kaesebrot.dev.shortener.model;
-import java.io.Serializable;
 import java.net.URI;
 import java.time.Instant;
+import java.util.UUID;
 
+import eu.kaesebrot.dev.shortener.model.dto.response.LinkResponse;
 import lombok.Getter;
 import lombok.Setter;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import eu.kaesebrot.dev.shortener.utils.StringUtils;
 import jakarta.persistence.*;
@@ -19,7 +17,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @Getter
 @EntityListeners(AuditingEntityListener.class)
-public class Link implements Serializable {
+@Table(indexes = @Index(name = "sh_index", columnList = "shortUri"))
+public class Link {
     @Version
     private long version;
 
@@ -39,18 +38,15 @@ public class Link implements Serializable {
     @ManyToOne
     @JoinColumn
     (name = "owner_id")
-    @JsonBackReference
     @Setter
     private AuthUser owner;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    @JsonProperty("created_at")
     private Instant createdAt;
 
     @LastModifiedDate
     @Column(nullable = false)
-    @JsonProperty("modified_at")
     private Instant modifiedAt;
 
     public Link() {
@@ -87,5 +83,9 @@ public class Link implements Serializable {
 
     public void incrementHits() {
         hits++;
+    }
+
+    public LinkResponse toDto() {
+        return LinkResponse.fromLink(this);
     }
 }
