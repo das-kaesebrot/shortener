@@ -81,18 +81,32 @@ public class LinkController {
     }
 
     @GetMapping("{id}")
-    Link getSingleLink(@PathVariable String id) {
-        return linkRepository.findById(id).orElseThrow(() -> new LinkNotFoundException(id));
+    @SecurityRequirement(name = "Authorization")
+    @PreAuthorize("hasAuthority('SCOPE_links')")
+    ResponseEntity<LinkResponse> getSingleLink(@PathVariable UUID id, final Authentication authentication) {
+        boolean isAdmin = AuthUtils.hasScope(authentication, "SCOPE_links_admin");
+
+        if (!linkRepository.existsByIdAndOwnerUsername(id, authentication.getName()) || (isAdmin && !linkRepository.existsById(id))) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The link could not be found");
+        }
+
+        return ResponseEntity.ok(linkRepository.findById(id).get().toDto());
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void deleteLink(@PathVariable String id) {
-        if (!linkRepository.existsById(id)) {
-            throw new LinkNotFoundException(id);
+    @SecurityRequirement(name = "Authorization")
+    @PreAuthorize("hasAuthority('SCOPE_links')")
+    @Transactional
+    ResponseEntity deleteLink(@PathVariable UUID id, final Authentication authentication) {
+        boolean isAdmin = AuthUtils.hasScope(authentication, "SCOPE_links_admin");
+
+        if (!linkRepository.existsByIdAndOwnerUsername(id, authentication.getName()) || (isAdmin && !linkRepository.existsById(id))) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The link could not be found");
         }
 
         linkRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("{shortUri}/redirect")
