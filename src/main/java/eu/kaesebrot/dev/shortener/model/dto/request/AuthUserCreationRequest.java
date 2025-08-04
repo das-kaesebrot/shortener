@@ -1,4 +1,4 @@
-package eu.kaesebrot.dev.shortener.model;
+package eu.kaesebrot.dev.shortener.model.dto.request;
 
 import java.io.Serializable;
 

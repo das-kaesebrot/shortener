@@ -3,7 +3,7 @@ import java.io.IOException;
 
 import eu.kaesebrot.dev.shortener.exceptions.LinkNotFoundException;
 import eu.kaesebrot.dev.shortener.model.Link;
-import eu.kaesebrot.dev.shortener.model.LinkCreation;
+import eu.kaesebrot.dev.shortener.model.dto.request.LinkCreation;
 import eu.kaesebrot.dev.shortener.repository.LinkRepository;
 import eu.kaesebrot.dev.shortener.utils.RandomStringGenerator;
 import eu.kaesebrot.dev.shortener.utils.StringUtils;

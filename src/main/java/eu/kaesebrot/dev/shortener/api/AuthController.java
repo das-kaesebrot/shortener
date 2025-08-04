@@ -3,6 +3,12 @@ import java.net.URI;
 import java.util.UUID;
 
 import eu.kaesebrot.dev.shortener.model.*;
+import eu.kaesebrot.dev.shortener.model.dto.request.AuthRequestInitial;
+import eu.kaesebrot.dev.shortener.model.dto.request.AuthRequestRefresh;
+import eu.kaesebrot.dev.shortener.model.dto.request.AuthUserCreationRequest;
+import eu.kaesebrot.dev.shortener.model.dto.response.AuthResponseBase;
+import eu.kaesebrot.dev.shortener.model.dto.response.AuthResponseInitial;
+import eu.kaesebrot.dev.shortener.model.dto.response.AuthResponseRefresh;
 import eu.kaesebrot.dev.shortener.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

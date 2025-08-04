@@ -1,7 +1,7 @@
 package eu.kaesebrot.dev.shortener.service;
 
-import eu.kaesebrot.dev.shortener.model.AuthRequestInitial;
-import eu.kaesebrot.dev.shortener.model.AuthResponseBase;
+import eu.kaesebrot.dev.shortener.model.dto.request.AuthRequestInitial;
+import eu.kaesebrot.dev.shortener.model.dto.response.AuthResponseBase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
