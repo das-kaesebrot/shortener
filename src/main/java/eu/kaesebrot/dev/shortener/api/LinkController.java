@@ -63,7 +63,7 @@ public class LinkController {
     @SecurityRequirement(name = "Authorization")
     @PreAuthorize("hasAuthority('SCOPE_links')")
     public ResponseEntity<LinkResponse> createSingleLink(@Valid @RequestBody LinkRequestCreation linkRequestCreation, final Authentication authentication) {
-        String linkId = linkRequestCreation.getId();
+        String linkId = linkRequestCreation.shortUri();
 
         if (StringUtils.isNullOrEmpty(linkId)) {
             do {
@@ -74,7 +74,7 @@ public class LinkController {
         }
 
         final AuthUser owner = authUserRepository.findByUsername(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User could not be found!"));
-        Link link = new Link(linkId, linkRequestCreation.getRedirectUri(), owner);
+        Link link = new Link(linkId, linkRequestCreation.shortUri(), owner);
         linkRepository.save(link);
 
         return ResponseEntity.ok(link.toDto());
