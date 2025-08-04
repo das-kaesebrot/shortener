@@ -62,7 +62,7 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists!");
         }
 
-        AuthUser user = new AuthUser(authUserRequestCreation.username(), passwordEncoder.encode(authUserRequestCreation.username()), authUserRequestCreation.email());
+        AuthUser user = new AuthUser(authUserRequestCreation.username(), passwordEncoder.encode(authUserRequestCreation.username()), authUserRequestCreation.email(), Set.of(new SimpleGrantedAuthority("SCOPE_self")));
         userRepository.save(user);
         
         confirmationTokenService.generateAndSendConfirmationTokenToUser(user, URI.create(request.getRequestURL().toString()), String.format("api/v1/shortener/users/%s/confirm", user.getId().toString()));
