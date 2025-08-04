@@ -46,7 +46,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     @Transactional
     public String generateRefreshTokenForUser(AuthUser user, Instant expiresAt) {
-        String rawRefreshToken = randomStringGenerator.generateHexToken(256);
+        String rawRefreshToken = randomStringGenerator.generate(72);
         String encodedRefreshToken = passwordEncoder.encode(rawRefreshToken);
 
         RefreshToken refreshToken = new RefreshToken(user, encodedRefreshToken, expiresAt);
