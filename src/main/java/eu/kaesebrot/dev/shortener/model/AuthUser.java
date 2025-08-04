@@ -81,6 +81,11 @@ public class AuthUser implements UserDetails, CredentialsContainer {
     @Getter
     private String hashedConfirmationToken;
 
+    @JsonIgnore
+    @Getter
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<RefreshToken> refreshTokens = new HashSet<>();
+
     @CreatedDate
     @Column(nullable = false)
     @JsonProperty("created_at")
