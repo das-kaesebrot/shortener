@@ -4,6 +4,7 @@ import java.util.UUID;
 import eu.kaesebrot.dev.shortener.model.AuthUser;
 import eu.kaesebrot.dev.shortener.model.Link;
 import eu.kaesebrot.dev.shortener.model.dto.request.LinkRequestCreation;
+import eu.kaesebrot.dev.shortener.model.dto.request.LinkRequestPatch;
 import eu.kaesebrot.dev.shortener.model.dto.response.LinkResponse;
 import eu.kaesebrot.dev.shortener.repository.AuthUserRepository;
 import eu.kaesebrot.dev.shortener.repository.LinkRepository;
@@ -91,6 +92,35 @@ public class LinkController {
         }
 
         return ResponseEntity.ok(linkRepository.findById(id).get().toDto());
+    }
+
+    @PatchMapping("{id}")
+    @SecurityRequirement(name = "Authorization")
+    @PreAuthorize("hasAuthority('SCOPE_links')")
+    @Transactional
+    ResponseEntity<LinkResponse> updateLink(@PathVariable UUID id, @Valid @RequestBody LinkRequestPatch linkRequestPatch, final Authentication authentication) {
+        boolean isAdmin = AuthUtils.hasScope(authentication, "SCOPE_links_admin");
+
+        if (!linkRepository.existsByIdAndOwnerUsername(id, authentication.getName()) || (isAdmin && !linkRepository.existsById(id))) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The link could not be found");
+        }
+
+        Link link = linkRepository.findById(id).get();
+
+        if (linkRequestPatch.shortUri() != null && !linkRequestPatch.shortUri().equals(link.getShortUri())) {
+            link.setShortUri(linkRequestPatch.shortUri());
+        }
+
+        if (linkRequestPatch.redirectUri() != null && !linkRequestPatch.redirectUri().equals(link.getRedirectUri().toString())) {
+            link.setRedirectUri(linkRequestPatch.redirectUri());
+        }
+
+        if (linkRequestPatch.ownerUsername() != null && !linkRequestPatch.ownerUsername().equals(link.getOwner().getUsername())) {
+            AuthUser newOwner = authUserRepository.findByUsername(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User could not be found!"));
+            link.setOwner(newOwner);
+        }
+
+        return ResponseEntity.ok(linkRepository.save(link).toDto());
     }
 
     @DeleteMapping("{id}")

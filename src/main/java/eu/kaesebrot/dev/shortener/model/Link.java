@@ -28,6 +28,7 @@ public class Link {
     private UUID Id;
 
     @Column(unique = true, nullable = false)
+    @Setter
     private String shortUri;
 
     private URI redirectUri;
