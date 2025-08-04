@@ -36,12 +36,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public String generateRefreshTokenForUser(UUID userId, Instant expiresAt) {
-        AuthUser user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found"));
-        return generateRefreshTokenForUser(user, expiresAt);
-    }
-
-    @Override
     public String generateRefreshTokenForUser(String username, Instant expiresAt) {
         AuthUser user = userRepository.findByUsername(username).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found"));
         return generateRefreshTokenForUser(user, expiresAt);
