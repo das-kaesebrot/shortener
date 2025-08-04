@@ -1,5 +1,6 @@
 package eu.kaesebrot.dev.shortener.api;
 import java.net.URI;
+import java.util.Set;
 import java.util.UUID;
 
 import eu.kaesebrot.dev.shortener.model.*;
@@ -22,8 +23,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,11 +75,15 @@ public class AuthController {
     }
 
     @GetMapping("users/{id}")
+    @SecurityRequirement(name = "Authorization")
+    @PreAuthorize("hasAuthority('SCOPE_users_read')")
     public ResponseEntity<AuthUserResponse> getUser(@PathVariable UUID id) {
         return ResponseEntity.ok(userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found")).toDto());
     }
 
     @DeleteMapping("users/{id}")
+    @SecurityRequirement(name = "Authorization")
+    @PreAuthorize("hasAuthority('SCOPE_users_delete')")
     public ResponseEntity deleteUser(@PathVariable UUID id) {
         long deletedUsers = userRepository.removeById(id);
         if (deletedUsers <= 0) {
@@ -85,11 +93,15 @@ public class AuthController {
     }
 
     @GetMapping("users")
-    public ResponseEntity<Page<AuthUserResponse>> getUsers(Pageable pageable) {
+    @SecurityRequirement(name = "Authorization")
+    @PreAuthorize("hasAuthority('SCOPE_users_read')")
+    public ResponseEntity<Page<AuthUserResponse>> getUsers(@Valid @RequestParam Pageable pageable) {
         return ResponseEntity.ok(userRepository.findAll(pageable).map(AuthUser::toDto));
     }
 
     @GetMapping("users/me")
+    @SecurityRequirement(name = "Authorization")
+    @PreAuthorize("hasAuthority('SCOPE_self')")
     public ResponseEntity<AuthUserResponse> getSelf(final Authentication authentication) {
         AuthUser user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found"));
 
@@ -97,6 +109,8 @@ public class AuthController {
     }
 
     @DeleteMapping("users/me")
+    @SecurityRequirement(name = "Authorization")
+    @PreAuthorize("hasAuthority('SCOPE_self')")
     public ResponseEntity deleteSelf(final Authentication authentication) {
         long deletedUsers = userRepository.removeByUsername(authentication.getName());
         if (deletedUsers <= 0) {
@@ -115,23 +129,33 @@ public class AuthController {
 
     @PostMapping("login")
     public ResponseEntity<AuthResponseInitial> getJwt(@Valid @RequestBody AuthRequestInitial request) {
-        return ResponseEntity.ok(authService.authenticate(request));
+        return ResponseEntity.ok(authService.authenticateViaUsernameAndPassword(request));
     }
 
     @PostMapping("refresh")
     public ResponseEntity<AuthResponseRefresh> refreshJwt(@Valid @RequestBody AuthRequestRefresh request) {
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(authService.authenticateViaUsernameAndRefreshToken(request));
     }
 
     @PostMapping("logout")
-    public ResponseEntity revokeSingleRefreshToken(final Authentication authentication, @Valid @RequestBody AuthRequestRefresh request) {
-        refreshTokenService.deleteRefreshTokenByRawToken(authentication.getName(), request.refreshToken());
+    @SecurityRequirement(name = "Authorization")
+    @PreAuthorize("hasAuthority('SCOPE_self')")
+    public ResponseEntity revokeSingleRefreshToken(final Authentication authentication, @Valid @RequestBody String refreshToken) {
+        refreshTokenService.deleteRefreshTokenByRawToken(authentication.getName(), refreshToken);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("revoke")
+    @SecurityRequirement(name = "Authorization")
+    @PreAuthorize("hasAuthority('SCOPE_self')")
     public ResponseEntity revokeAllRefreshTokens(final Authentication authentication) {
         refreshTokenService.deleteAllRefreshTokensOfUser(authentication.getName());
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("debug")
+    @SecurityRequirement(name = "Authorization")
+    public ResponseEntity debugToken(final Authentication authentication, final JwtAuthenticationToken auth) {
         return ResponseEntity.noContent().build();
     }
 }
