@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-public class LinkCreation implements Serializable {
+public class LinkRequestCreation implements Serializable {
     @NotNull
     @JsonProperty("redirect_uri")
     private String redirectUri;

@@ -3,7 +3,7 @@ import java.io.IOException;
 
 import eu.kaesebrot.dev.shortener.exceptions.LinkNotFoundException;
 import eu.kaesebrot.dev.shortener.model.Link;
-import eu.kaesebrot.dev.shortener.model.dto.request.LinkCreation;
+import eu.kaesebrot.dev.shortener.model.dto.request.LinkRequestCreation;
 import eu.kaesebrot.dev.shortener.repository.LinkRepository;
 import eu.kaesebrot.dev.shortener.utils.RandomStringGenerator;
 import eu.kaesebrot.dev.shortener.utils.StringUtils;
@@ -31,8 +31,8 @@ public class LinkController {
     }
 
     @PostMapping
-    Link createSingleLink(@Valid @RequestBody LinkCreation linkCreation) {
-        String linkId = linkCreation.getId();
+    Link createSingleLink(@Valid @RequestBody LinkRequestCreation linkRequestCreation) {
+        String linkId = linkRequestCreation.getId();
 
         if (StringUtils.isNullOrEmpty(linkId)) {
             do {
@@ -42,7 +42,7 @@ public class LinkController {
             throw new IllegalArgumentException(String.format("Link with id %s already exists!", linkId));
         }
 
-        Link link = new Link(linkId, linkCreation.getRedirectUri(), null);
+        Link link = new Link(linkId, linkRequestCreation.getRedirectUri(), null);
 
         linkRepository.save(link);
 

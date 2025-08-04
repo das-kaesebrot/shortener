@@ -5,7 +5,7 @@ import java.util.UUID;
 import eu.kaesebrot.dev.shortener.model.*;
 import eu.kaesebrot.dev.shortener.model.dto.request.AuthRequestInitial;
 import eu.kaesebrot.dev.shortener.model.dto.request.AuthRequestRefresh;
-import eu.kaesebrot.dev.shortener.model.dto.request.AuthUserCreationRequest;
+import eu.kaesebrot.dev.shortener.model.dto.request.AuthUserRequestCreation;
 import eu.kaesebrot.dev.shortener.model.dto.response.AuthResponseBase;
 import eu.kaesebrot.dev.shortener.model.dto.response.AuthResponseInitial;
 import eu.kaesebrot.dev.shortener.model.dto.response.AuthResponseRefresh;
@@ -42,12 +42,12 @@ public class AuthController {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @PostMapping("users")
-    public ResponseEntity<AuthUser> registerUser(HttpServletRequest request, @Valid @RequestBody AuthUserCreationRequest authUserCreationRequest) {
-        if (userRepository.existsByUsernameOrEmail(authUserCreationRequest.username(),  authUserCreationRequest.email())) {
+    public ResponseEntity<AuthUser> registerUser(HttpServletRequest request, @Valid @RequestBody AuthUserRequestCreation authUserRequestCreation) {
+        if (userRepository.existsByUsernameOrEmail(authUserRequestCreation.username(),  authUserRequestCreation.email())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists!");
         }
 
-        AuthUser user = new AuthUser(authUserCreationRequest.username(), passwordEncoder.encode(authUserCreationRequest.username()), authUserCreationRequest.email());
+        AuthUser user = new AuthUser(authUserRequestCreation.username(), passwordEncoder.encode(authUserRequestCreation.username()), authUserRequestCreation.email());
         userRepository.save(user);
         
         confirmationTokenService.generateAndSendConfirmationTokenToUser(user, URI.create(request.getRequestURL().toString()), String.format("api/v1/shortener/users/%s/confirm", user.getId().toString()));
