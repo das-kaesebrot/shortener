@@ -56,7 +56,7 @@ public class AuthUser implements UserDetails, CredentialsContainer {
     @ElementCollection(targetClass = GrantedAuthority.class)
     @CollectionTable
     @Setter
-    private Set<GrantedAuthority> authorities;
+    private Set<GrantedAuthority> authorities = Collections.synchronizedSet(Set.of());
 
     @Column(nullable = true)
     @Getter
@@ -73,16 +73,16 @@ public class AuthUser implements UserDetails, CredentialsContainer {
     @Column(nullable = false)
     private Instant modifiedAt;
 
-    public AuthUser(@NotBlank String username, @NotBlank String passwordHash, String email) {
+    public AuthUser(@NotBlank String username, @NotBlank String passwordHash, String email, Set<GrantedAuthority> authorities) {
         this();
         this.username = username;
         this.passwordHash = passwordHash;
         this.email = email;
+        this.authorities = authorities;
     }
 
     public AuthUser() {
         this.links = new HashSet<>();
-        this.authorities = Collections.synchronizedSet(Set.of());
         this.enabled = true;
     }
 
@@ -101,7 +101,7 @@ public class AuthUser implements UserDetails, CredentialsContainer {
     }
 
     public void updateHashedConfirmationToken(String hashedConfirmationToken) {
-        if (this.hashedConfirmationToken == hashedConfirmationToken) {
+        if (this.hashedConfirmationToken.equals(hashedConfirmationToken)) {
             return;
         }
 
