@@ -1,5 +1,4 @@
 package eu.kaesebrot.dev.shortener.model;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.*;
 
@@ -9,13 +8,13 @@ import jakarta.validation.constraints.NotBlank;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
@@ -53,11 +52,11 @@ public class AuthUser implements UserDetails, CredentialsContainer {
 
     @Column(nullable = true)
     @JsonProperty("account_expired_at")
-    private Timestamp accountExpiredAt;
+    private Instant accountExpiredAt;
 
     @Column(nullable = true)
     @JsonProperty("credentials_expired_at")
-    private Timestamp credentialsExpiredAt;
+    private Instant credentialsExpiredAt;
 
     @JsonProperty("is_locked")
     private boolean locked;
@@ -82,17 +81,17 @@ public class AuthUser implements UserDetails, CredentialsContainer {
     @Getter
     private String hashedConfirmationToken;
 
-    @CreationTimestamp
+    @CreatedDate
     @Column(nullable = false)
     @JsonProperty("created_at")
     @Getter
-    private Timestamp createdAt;
+    private Instant createdAt;
 
-    @UpdateTimestamp
+    @LastModifiedDate
     @Column(nullable = false)
     @JsonProperty("modified_at")
     @Getter
-    private Timestamp modifiedAt;
+    private Instant modifiedAt;
 
     public AuthUser(@NotBlank String username, @NotBlank String passwordHash, String email) {
         this();
@@ -143,7 +142,7 @@ public class AuthUser implements UserDetails, CredentialsContainer {
 
     @Override
     public boolean isAccountNonExpired() {
-        return accountExpiredAt == null || Timestamp.from(Instant.now()).before(accountExpiredAt);
+        return accountExpiredAt == null || Instant.now().isBefore(accountExpiredAt);
     }
 
     public void setAccountExpired() {
@@ -151,11 +150,11 @@ public class AuthUser implements UserDetails, CredentialsContainer {
             return;
         }
 
-        accountExpiredAt = Timestamp.from(Instant.now());
+        accountExpiredAt = Instant.now();
     }
 
     public void setAccountExpired(Instant instant) {
-        accountExpiredAt = Timestamp.from(instant);
+        accountExpiredAt = instant;
     }
 
     public void clearAccountExpired() {
@@ -177,7 +176,7 @@ public class AuthUser implements UserDetails, CredentialsContainer {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return credentialsExpiredAt == null || Timestamp.from(Instant.now()).before(credentialsExpiredAt);
+        return credentialsExpiredAt == null || Instant.now().isBefore(credentialsExpiredAt);
     }
 
     public void setCredentialsExpired() {
@@ -185,11 +184,11 @@ public class AuthUser implements UserDetails, CredentialsContainer {
             return;
         }
 
-        credentialsExpiredAt = Timestamp.from(Instant.now());
+        credentialsExpiredAt = Instant.now();
     }
 
     public void setCredentialsExpired(Instant instant) {
-        credentialsExpiredAt = Timestamp.from(instant);
+        credentialsExpiredAt = instant;
     }
 
     public void clearCredentialsExpired() {

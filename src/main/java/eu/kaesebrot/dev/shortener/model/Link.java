@@ -1,12 +1,10 @@
 package eu.kaesebrot.dev.shortener.model;
 import java.io.Serializable;
 import java.net.URI;
-import java.sql.Timestamp;
+import java.time.Instant;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.kaesebrot.dev.shortener.utils.StringUtils;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
@@ -40,15 +40,15 @@ public class Link implements Serializable {
     @Setter
     private AuthUser owner;
 
-    @CreationTimestamp
-    @Column(nullable = false)
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
     @JsonProperty("created_at")
-    private Timestamp createdAt;
+    private Instant createdAt;
 
-    @UpdateTimestamp
+    @LastModifiedDate
     @Column(nullable = false)
     @JsonProperty("modified_at")
-    private Timestamp modifiedAt;
+    private Instant modifiedAt;
 
     public Link() {
         this.hits = 0;
