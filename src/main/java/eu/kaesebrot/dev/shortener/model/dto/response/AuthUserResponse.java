@@ -28,7 +28,7 @@ public class AuthUserResponse implements Serializable {
     @JsonProperty("is_enabled")
     private boolean enabled;
     @JsonProperty("links")
-    private List<String> linkIds;
+    private List<UUID> linkIds;
     @JsonProperty("granted_authorities")
     private List<String> grantedAuthorities;
     @JsonProperty("created_at")
