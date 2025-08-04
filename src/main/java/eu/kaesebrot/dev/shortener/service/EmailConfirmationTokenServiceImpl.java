@@ -5,6 +5,7 @@ import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +22,19 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
     private final RandomStringGenerator randomStringGenerator;
     private final EmailSendingService emailSendingService;
 
+    @Value("${shortener.mail.verfication-required:false}")
+    private boolean verficationRequired;
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public void generateAndSendConfirmationTokenToUser(AuthUser user, URI originalRequestUri,
                                                        String tokenConfirmationPath) {
+        if (!verficationRequired) {
+            logger.warn("Mail verification is disabled, skipping sending mail to user");
+            return;
+        }
+
         String rawToken = randomStringGenerator.generateHexToken();
         user.updateHashedConfirmationToken(passwordEncoder.encode(rawToken));
         shortenerUserRepository.save(user);
@@ -47,6 +56,8 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
 
     @Override
     public void redeemToken(AuthUser user, String rawToken) {
+        if (!verficationRequired) return;
+
         if (!passwordEncoder.matches(rawToken, user.getHashedConfirmationToken())) {
             throw new IllegalArgumentException("Token doesn't match!");
         }
