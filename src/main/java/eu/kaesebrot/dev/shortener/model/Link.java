@@ -28,7 +28,6 @@ public class Link implements Serializable {
     private String id;
 
     @JsonProperty("redirect_uri")
-    @Setter
     private URI redirectUri;
 
     @NotNull
@@ -58,12 +57,7 @@ public class Link implements Serializable {
     public Link(String shortUri, URI redirectUri, AuthUser owner) {
         this();
         this.id = shortUri;
-        if (StringUtils.isNullOrEmpty(redirectUri.getScheme())) {
-            String redirectUriStr = redirectUri.toString();
-            redirectUriStr = String.format("%s://%s", "https", redirectUriStr);
-            redirectUri = URI.create(redirectUriStr);
-        }
-        this.redirectUri = redirectUri;
+        setRedirectUri(redirectUri);
         this.owner = owner;
     }
 
@@ -72,7 +66,20 @@ public class Link implements Serializable {
     }
 
     public void setRedirectUri(String redirectUri) {
-        this.redirectUri = URI.create(redirectUri);
+        setRedirectUri(URI.create(redirectUri));
+    }
+
+    public void setRedirectUri(URI redirectUri) {
+        setRedirectUri(redirectUri, false);
+    }
+
+    public void setRedirectUri(URI redirectUri, boolean checkScheme) {
+        if (StringUtils.isNullOrEmpty(redirectUri.getScheme()) && checkScheme) {
+            String redirectUriStr = redirectUri.toString();
+            redirectUriStr = String.format("%s://%s", "https", redirectUriStr);
+            redirectUri = URI.create(redirectUriStr);
+        }
+        this.redirectUri = redirectUri;
     }
 
     public void incrementHits() {
