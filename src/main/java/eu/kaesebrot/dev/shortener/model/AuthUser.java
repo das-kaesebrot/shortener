@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Table(indexes = @Index(name = "un_index", columnList = "username"))
 @Getter
 public class AuthUser implements UserDetails, CredentialsContainer {
     @Version
