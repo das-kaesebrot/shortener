@@ -1,24 +1,19 @@
 package eu.kaesebrot.dev.shortener.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
-import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
 
-@Service
+@RequiredArgsConstructor
 public class JwtService {
+    private final String issuer;
     private final JwtEncoder encoder;
     private final JwtDecoder decoder;
-
-    private final Duration tokenLifeTime = Duration.ofDays(1);
-
-    public JwtService(JwtEncoder encoder, JwtDecoder decoder) {
-        this.encoder = encoder;
-        this.decoder = decoder;
-    }
+    private final Duration tokenLifeTime;
 
     public String generateToken(Authentication authentication) {
         Instant now = Instant.now();
