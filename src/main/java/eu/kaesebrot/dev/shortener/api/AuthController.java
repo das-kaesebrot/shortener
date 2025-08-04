@@ -5,6 +5,7 @@ import java.util.UUID;
 import eu.kaesebrot.dev.shortener.model.*;
 import eu.kaesebrot.dev.shortener.service.AuthService;
 import eu.kaesebrot.dev.shortener.service.AuthUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("${shortener.hosting.subdirectory:}/api/v1/auth")
 @Tag(name = "auth", description = "The auth API")
+@RequiredArgsConstructor
 public class AuthController {
     private final ShortenerUserRepository userRepository;
     private final EmailConfirmationTokenService confirmationTokenService;
@@ -35,13 +37,6 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    AuthController(ShortenerUserRepository userRepository, EmailConfirmationTokenService confirmationTokenService, AuthService authService, AuthUserDetailsService authUserDetailsService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
-        this.userRepository = userRepository;
-        this.confirmationTokenService = confirmationTokenService;
-        this.authService = authService;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @PostMapping("users")
     AuthUser registerUser(HttpServletRequest request, @Valid @RequestBody AuthUserCreationRequest authUserCreationRequest) {

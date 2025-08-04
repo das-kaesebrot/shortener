@@ -20,8 +20,8 @@ import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
 
 @Configuration
-@Setter
 @Getter
+@Setter
 @ConfigurationProperties(prefix = "shortener.jwt")
 public class JwtConfig {
     private RSAPrivateKey privateKey;

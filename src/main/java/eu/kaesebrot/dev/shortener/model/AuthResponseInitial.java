@@ -1,9 +1,11 @@
 package eu.kaesebrot.dev.shortener.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
 public class AuthResponseInitial extends AuthResponseBase {
     @JsonProperty("refresh_token")
+    @Getter
     private String refreshToken;
 
     public AuthResponseInitial() {
@@ -18,9 +20,5 @@ public class AuthResponseInitial extends AuthResponseBase {
     public AuthResponseInitial(String jwt, String principalName, Long expiresAt, String refreshToken) {
         super(jwt, principalName, expiresAt);
         this.refreshToken = refreshToken;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
     }
 }

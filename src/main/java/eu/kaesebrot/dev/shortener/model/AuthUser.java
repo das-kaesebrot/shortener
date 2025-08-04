@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -22,15 +24,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class AuthUser implements UserDetails, CredentialsContainer {
     @Version
     @JsonIgnore
+    @Getter
     private long version;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(updatable = false, nullable = false)
+    @Getter
     private UUID id;
 
     @NotBlank
     @Column(unique=true)
+    @Getter
+    @Setter
     private String username;
 
     @NotBlank
@@ -40,6 +46,7 @@ public class AuthUser implements UserDetails, CredentialsContainer {
     @NotBlank
     @Email
     @Column(unique=true)
+    @Getter
     private String email;
 
     @Column(nullable = true)
@@ -58,25 +65,31 @@ public class AuthUser implements UserDetails, CredentialsContainer {
 
     @OneToMany(mappedBy="owner")
     @JsonManagedReference
+    @Getter
+    @Setter
     private Set<Link> links;
 
     @ElementCollection(targetClass = GrantedAuthority.class)
     @CollectionTable
     @JsonProperty("authorities")
+    @Setter
     private Set<GrantedAuthority> authorities;
 
     @Column(nullable = true)
     @JsonIgnore
+    @Getter
     private String hashedConfirmationToken;
 
     @CreationTimestamp
     @Column(nullable = false)
     @JsonProperty("created_at")
+    @Getter
     private Timestamp createdAt;
 
     @UpdateTimestamp
     @Column(nullable = false)
     @JsonProperty("modified_at")
+    @Getter
     private Timestamp modifiedAt;
 
     public AuthUser(@NotBlank String username, @NotBlank String passwordHash, String email) {
@@ -93,14 +106,6 @@ public class AuthUser implements UserDetails, CredentialsContainer {
     }
 
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     @Override
     public String getPassword() {
         return passwordHash;
@@ -110,40 +115,8 @@ public class AuthUser implements UserDetails, CredentialsContainer {
         this.passwordHash = passwordHash;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     public void updateEmail(String email) {
         this.email = email;
-    }
-
-    public Set<Link> getLinks() {
-        return links;
-    }
-
-    public void setLinks(Set<Link> links) {
-        this.links = links;
-    }
-
-    public long getVersion() {
-        return version;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public Timestamp getModifiedAt() {
-        return modifiedAt;
-    }
-
-    public String getHashedConfirmationToken() {
-        return hashedConfirmationToken;
     }
 
     public void updateHashedConfirmationToken(String hashedConfirmationToken) {
@@ -164,10 +137,6 @@ public class AuthUser implements UserDetails, CredentialsContainer {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
-    }
-
-    public void setAuthorities(Set<GrantedAuthority> authorities) {
-        this.authorities = authorities;
     }
 
     @Override

@@ -10,6 +10,7 @@ import eu.kaesebrot.dev.shortener.utils.StringUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -19,14 +20,10 @@ import org.springframework.web.servlet.view.RedirectView;
 @RestController
 @RequestMapping("${shortener.hosting.subdirectory:}/api/v1/links")
 @Tag(name = "links", description = "The Link API")
+@RequiredArgsConstructor
 public class LinkController {
     private final LinkRepository linkRepository;
     private final RandomStringGenerator randomStringGenerator;
-    
-    LinkController(LinkRepository linkRepository, RandomStringGenerator randomStringGenerator) {
-        this.linkRepository = linkRepository;
-        this.randomStringGenerator = randomStringGenerator;
-    }
 
     @GetMapping
     Page<Link> getAllLinks(Pageable pageable) {

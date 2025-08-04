@@ -3,6 +3,8 @@ import java.io.Serializable;
 import java.net.URI;
 import java.sql.Timestamp;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,8 +16,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
+@Getter
 public class Link implements Serializable {
     @Version
+    @Setter
     private long version;
 
     @Id
@@ -23,6 +27,7 @@ public class Link implements Serializable {
     private String id;
 
     @JsonProperty("redirect_uri")
+    @Setter
     private URI redirectUri;
 
     @NotNull
@@ -32,6 +37,7 @@ public class Link implements Serializable {
     @JoinColumn
     (name = "owner_id")
     @JsonBackReference
+    @Setter
     private AuthUser owner;
 
     @CreationTimestamp
@@ -63,52 +69,12 @@ public class Link implements Serializable {
     public Link(String shortUri, String redirectUri, AuthUser owner) {
         this(shortUri, URI.create(redirectUri), owner);
     }
-    
-    public long getVersion() {
-        return version;
-    }
-
-    public void setVersion(long version) {
-        this.version = version;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public URI getRedirectUri() {
-        return redirectUri;
-    }
-
-    public void setRedirectUri(URI redirectUri) {
-        this.redirectUri = redirectUri;
-    }
 
     public void setRedirectUri(String redirectUri) {
-        this.setRedirectUri(URI.create(redirectUri));
-    }
-
-    public int getHits() {
-        return hits;
-    }
-
-    public AuthUser getOwner() {
-        return owner;
-    }
-
-    public void setOwner(AuthUser owner) {
-        this.owner = owner;
+        this.redirectUri = URI.create(redirectUri);
     }
 
     public void incrementHits() {
         hits++;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public Timestamp getModifiedAt() {
-        return modifiedAt;
     }
 }

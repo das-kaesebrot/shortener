@@ -2,6 +2,7 @@ package eu.kaesebrot.dev.shortener.service;
 
 import java.net.URI;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,6 +13,7 @@ import eu.kaesebrot.dev.shortener.repository.ShortenerUserRepository;
 import eu.kaesebrot.dev.shortener.utils.RandomStringGenerator;
 
 @Service
+@RequiredArgsConstructor
 public class EmailConfirmationTokenServiceImpl implements EmailConfirmationTokenService {
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -20,13 +22,6 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
     private final EmailSendingService emailSendingService;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    public EmailConfirmationTokenServiceImpl(ShortenerUserRepository shortenerUserRepository,
-                                             RandomStringGenerator randomStringGenerator, EmailSendingService emailSendingService) {
-        this.shortenerUserRepository = shortenerUserRepository;
-        this.randomStringGenerator = randomStringGenerator;
-        this.emailSendingService = emailSendingService;
-    }
 
     @Override
     public void generateAndSendConfirmationTokenToUser(AuthUser user, URI originalRequestUri,

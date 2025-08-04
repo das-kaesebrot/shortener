@@ -1,7 +1,8 @@
 package eu.kaesebrot.dev.shortener.security;
 
 import eu.kaesebrot.dev.shortener.service.AuthUserDetailsService;
- import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,19 +24,14 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfiguration {
-
     private final AuthUserDetailsService _authUserDetailsService;
-    private final BCryptPasswordEncoder _passwordEncoder;
+    private final BCryptPasswordEncoder _passwordEncoder = new BCryptPasswordEncoder();
 
     // TODO
     @Value("${shortener.hosting.subdirectory:}")
     private final String subdirectory = "";
-
-    public SecurityConfiguration(AuthUserDetailsService authUserDetailsService) {
-        _authUserDetailsService = authUserDetailsService;
-        _passwordEncoder = new BCryptPasswordEncoder();
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
