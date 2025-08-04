@@ -121,6 +121,18 @@ public class AuthUser implements UserDetails, CredentialsContainer {
         return authorities;
     }
 
+    public void addAuthority(GrantedAuthority authority) {
+        if (!this.authorities.add(authority)) {
+            throw new IllegalArgumentException("Authority is already present!");
+        }
+    }
+
+    public void removeAuthority(GrantedAuthority authority) {
+        if (!this.authorities.remove(authority)) {
+            throw new IllegalArgumentException("Authority wasn't present!");
+        }
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return accountExpiredAt == null || Instant.now().isBefore(accountExpiredAt);
