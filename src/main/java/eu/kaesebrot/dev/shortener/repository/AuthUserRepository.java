@@ -10,9 +10,10 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface ShortenerUserRepository extends JpaRepository<AuthUser, UUID> {
-    boolean existsByUsername(String username);
-    boolean existsByEmail(String email);
+public interface AuthUserRepository extends JpaRepository<AuthUser, UUID> {
+    boolean existsByUsernameOrEmail(String username, String email);
     Optional<AuthUser> findByUsername(String username);
-    Optional<AuthUser> findByEmail(String email);
+    Optional<AuthUser> findByUsernameOrEmail(String username, String email);
+    Long removeByUsername(String username);
+    Long removeById(UUID id);
 }

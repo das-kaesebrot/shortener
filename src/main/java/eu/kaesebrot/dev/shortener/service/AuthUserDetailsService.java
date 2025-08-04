@@ -1,6 +1,6 @@
 package eu.kaesebrot.dev.shortener.service;
 
-import eu.kaesebrot.dev.shortener.repository.ShortenerUserRepository;
+import eu.kaesebrot.dev.shortener.repository.AuthUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,15 +10,11 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthUserDetailsService implements UserDetailsService {
-    private final ShortenerUserRepository _userRepository;
+    private final AuthUserRepository _userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var matchedUser = _userRepository.findByUsername(username);
-
-        if (matchedUser.isEmpty()) {
-            matchedUser = _userRepository.findByEmail(username);
-        }
+        var matchedUser = _userRepository.findByUsernameOrEmail(username, username);
 
         return matchedUser.orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }

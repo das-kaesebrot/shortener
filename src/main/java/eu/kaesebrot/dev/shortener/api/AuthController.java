@@ -31,7 +31,7 @@ import jakarta.validation.Valid;
 @Tag(name = "auth", description = "The auth API")
 @RequiredArgsConstructor
 public class AuthController {
-    private final ShortenerUserRepository userRepository;
+    private final AuthUserRepository userRepository;
     private final EmailConfirmationTokenService confirmationTokenService;
     private final AuthService authService;
     private final PasswordEncoder passwordEncoder;

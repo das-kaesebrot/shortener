@@ -11,7 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import eu.kaesebrot.dev.shortener.model.AuthUser;
-import eu.kaesebrot.dev.shortener.repository.ShortenerUserRepository;
+import eu.kaesebrot.dev.shortener.repository.AuthUserRepository;
 import eu.kaesebrot.dev.shortener.utils.RandomStringGenerator;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class EmailConfirmationTokenServiceImpl implements EmailConfirmationTokenService {
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    private final ShortenerUserRepository shortenerUserRepository;
+    private final AuthUserRepository authUserRepository;
     private final RandomStringGenerator randomStringGenerator;
     private final EmailSendingService emailSendingService;
 
@@ -40,7 +40,7 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
 
         String rawToken = randomStringGenerator.generateHexToken();
         user.updateHashedConfirmationToken(passwordEncoder.encode(rawToken));
-        shortenerUserRepository.save(user);
+        authUserRepository.save(user);
 
         String portString = "";
 
@@ -66,7 +66,6 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
             throw new IllegalArgumentException("Token doesn't match!");
         }
         user.setEmailVerified();
-        shortenerUserRepository.save(user);
+        authUserRepository.save(user);
     }
-
 }
