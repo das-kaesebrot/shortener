@@ -14,9 +14,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.kaesebrot.dev.shortener.utils.StringUtils;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 public class Link implements Serializable {
     @Version
     @Setter
