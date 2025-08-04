@@ -53,11 +53,14 @@ public class SecurityConfiguration {
                         // jwt retrieval and refresh
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/refresh").permitAll()
                         // self management
-                        .requestMatchers("/api/v1/auth/me").access(hasScope("self"))
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/logout", "/api/v1/auth/revoke").access(hasScope("self.logout"))
+                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/users/me").access(hasScope("self"))
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/auth/users/me").access(hasScope("self"))
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/auth/users/me").access(hasScope("self"))
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/logout", "/api/v1/auth/revoke").access(hasScope("self"))
                         // admin management
-                        .requestMatchers(HttpMethod.GET, "/api/api/v1/auth/users/*").access(hasScope("users.read"))
-                        .requestMatchers(HttpMethod.DELETE, "/api/api/v1/auth/users/*").access(hasScope("users.write"))
+                        .requestMatchers(HttpMethod.GET, "/api/api/v1/auth/users/*").access(hasScope("users_read"))
+                        .requestMatchers(HttpMethod.PATCH, "/api/api/v1/auth/users/*").access(hasScope("users_write"))
+                        .requestMatchers(HttpMethod.DELETE, "/api/api/v1/auth/users/*").access(hasScope("users_delete"))
                         //
                         // --- LINKS controller ---
                         //
