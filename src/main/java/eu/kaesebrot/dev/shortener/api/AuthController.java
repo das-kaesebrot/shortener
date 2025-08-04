@@ -6,10 +6,11 @@ import eu.kaesebrot.dev.shortener.model.*;
 import eu.kaesebrot.dev.shortener.model.dto.request.AuthRequestInitial;
 import eu.kaesebrot.dev.shortener.model.dto.request.AuthRequestRefresh;
 import eu.kaesebrot.dev.shortener.model.dto.request.AuthUserRequestCreation;
-import eu.kaesebrot.dev.shortener.model.dto.response.AuthResponseBase;
 import eu.kaesebrot.dev.shortener.model.dto.response.AuthResponseInitial;
 import eu.kaesebrot.dev.shortener.model.dto.response.AuthResponseRefresh;
+import eu.kaesebrot.dev.shortener.model.dto.response.AuthUserResponse;
 import eu.kaesebrot.dev.shortener.service.AuthService;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import eu.kaesebrot.dev.shortener.repository.AuthUserRepository;
@@ -42,7 +44,8 @@ public class AuthController {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @PostMapping("users")
-    public ResponseEntity<AuthUser> registerUser(HttpServletRequest request, @Valid @RequestBody AuthUserRequestCreation authUserRequestCreation) {
+    @Transactional
+    public ResponseEntity<AuthUserResponse> registerUser(HttpServletRequest request, @Valid @RequestBody AuthUserRequestCreation authUserRequestCreation) {
         if (userRepository.existsByUsernameOrEmail(authUserRequestCreation.username(),  authUserRequestCreation.email())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists!");
         }
@@ -52,12 +55,12 @@ public class AuthController {
         
         confirmationTokenService.generateAndSendConfirmationTokenToUser(user, URI.create(request.getRequestURL().toString()), String.format("api/v1/shortener/users/%s/confirm", user.getId().toString()));
 
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(user.toDto());
     }
 
     @GetMapping("users/{id}")
-    public ResponseEntity<AuthUser> getUser(@PathVariable UUID id) {
-        return ResponseEntity.ok(userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found")));
+    public ResponseEntity<AuthUserResponse> getUser(@PathVariable UUID id) {
+        return ResponseEntity.ok(userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found")).toDto());
     }
 
     @DeleteMapping("users/{id}")
@@ -70,15 +73,15 @@ public class AuthController {
     }
 
     @GetMapping("users")
-    public ResponseEntity<Page<AuthUser>> getUsers(Pageable pageable) {
-        return ResponseEntity.ok(userRepository.findAll(pageable));
+    public ResponseEntity<Page<AuthUserResponse>> getUsers(Pageable pageable) {
+        return ResponseEntity.ok(userRepository.findAll(pageable).map(AuthUser::toDto));
     }
 
     @GetMapping("users/me")
-    public ResponseEntity<AuthUser> getSelf(final Authentication authentication) {
+    public ResponseEntity<AuthUserResponse> getSelf(final Authentication authentication) {
         AuthUser user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found"));
 
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(user.toDto());
     }
 
     @DeleteMapping("users/me")
@@ -91,11 +94,11 @@ public class AuthController {
     }
 
     @GetMapping("users/{id}/confirm/{token}")
-    public ResponseEntity<AuthUser> confirmUserAccount(@PathVariable("id") UUID id, @PathVariable("token") String rawToken) {
+    public ResponseEntity<AuthUserResponse> confirmUserAccount(@PathVariable("id") UUID id, @PathVariable("token") String rawToken) {
         AuthUser user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found"));
         confirmationTokenService.redeemToken(user, rawToken);
 
-        return ResponseEntity.ok(userRepository.findById(id).get());
+        return ResponseEntity.ok(userRepository.findById(id).get().toDto());
     }
 
     @PostMapping("login")

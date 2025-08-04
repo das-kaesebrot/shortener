@@ -2,16 +2,13 @@ package eu.kaesebrot.dev.shortener.model;
 import java.time.Instant;
 import java.util.*;
 
+import eu.kaesebrot.dev.shortener.model.dto.response.AuthUserResponse;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 import lombok.Getter;
 import lombok.Setter;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -22,80 +19,58 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Getter
 public class AuthUser implements UserDetails, CredentialsContainer {
     @Version
-    @JsonIgnore
-    @Getter
     private long version;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(updatable = false, nullable = false)
-    @Getter
     private UUID id;
 
-    @NotBlank
     @Column(unique=true)
-    @Getter
     @Setter
     private String username;
 
-    @NotBlank
-    @JsonIgnore
     private String passwordHash;
 
-    @NotBlank
     @Email
     @Column(unique=true)
-    @Getter
     private String email;
 
     @Column(nullable = true)
-    @JsonProperty("account_expired_at")
     private Instant accountExpiredAt;
 
     @Column(nullable = true)
-    @JsonProperty("credentials_expired_at")
     private Instant credentialsExpiredAt;
 
-    @JsonProperty("is_locked")
     private boolean locked;
 
-    @JsonProperty("is_enabled")
     private boolean enabled;
 
     @OneToMany(mappedBy="owner")
-    @JsonManagedReference
-    @Getter
     @Setter
     private Set<Link> links;
 
     @ElementCollection(targetClass = GrantedAuthority.class)
     @CollectionTable
-    @JsonProperty("authorities")
     @Setter
     private Set<GrantedAuthority> authorities;
 
     @Column(nullable = true)
-    @JsonIgnore
     @Getter
     private String hashedConfirmationToken;
 
-    @JsonIgnore
-    @Getter
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RefreshToken> refreshTokens = new HashSet<>();
 
     @CreatedDate
     @Column(nullable = false)
-    @JsonProperty("created_at")
-    @Getter
     private Instant createdAt;
 
     @LastModifiedDate
     @Column(nullable = false)
-    @JsonProperty("modified_at")
-    @Getter
     private Instant modifiedAt;
 
     public AuthUser(@NotBlank String username, @NotBlank String passwordHash, String email) {
@@ -216,5 +191,9 @@ public class AuthUser implements UserDetails, CredentialsContainer {
     @Override
     public void eraseCredentials() {
         this.passwordHash = null;
+    }
+
+    public AuthUserResponse toDto() {
+        return AuthUserResponse.fromAuthUser(this);
     }
 }
