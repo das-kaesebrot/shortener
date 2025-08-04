@@ -75,10 +75,11 @@ public class LinkController {
         linkRepository.deleteById(id);
     }
 
-    @GetMapping("{id}/redirect")
+    @GetMapping("{shortUri}/redirect")
     @ResponseStatus(HttpStatus.FOUND)
-    RedirectView redirectShortUri(@PathVariable String id) throws IOException {
-        var link = linkRepository.findById(id).orElseThrow();
+    @Transactional
+    RedirectView redirectShortUri(@PathVariable String shortUri) {
+        var link = linkRepository.findByShortUri(shortUri).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The link could not be found"));
         link.incrementHits();
         linkRepository.save(link);
 

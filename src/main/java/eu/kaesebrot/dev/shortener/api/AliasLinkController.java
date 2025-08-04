@@ -6,8 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.io.IOException;
-
 @RestController
 @RequestMapping("${shortener.hosting.subdirectory:}/${shortener.hosting.redirect-alias:s}")
 @Tag(name = "redirect", description = "Alias to the links redirect")
@@ -15,9 +13,9 @@ import java.io.IOException;
 public class AliasLinkController {
     private final LinkController linkController;
 
-    @GetMapping("{id}")
+    @GetMapping("{shortUri}")
     @ResponseStatus(HttpStatus.FOUND)
-    RedirectView redirectShortUri(@PathVariable String id) throws IOException {
-        return linkController.redirectShortUri(id);
+    RedirectView redirectShortUri(@PathVariable String shortUri) {
+        return linkController.redirectShortUri(shortUri);
     }
 }
