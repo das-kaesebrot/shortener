@@ -100,12 +100,7 @@ public class AuthController {
 
     @PostMapping("login")
     public ResponseEntity<AuthResponseInitial> getJwt(@Valid @RequestBody AuthRequestInitial request) {
-        AuthResponseBase responseBase = authService.authenticate(request);
-
-        // TODO
-        String rawRefreshToken = "token";
-        passwordEncoder.encode(rawRefreshToken);
-        return ResponseEntity.ok(new AuthResponseInitial(responseBase, rawRefreshToken));
+        return ResponseEntity.ok(authService.authenticate(request));
     }
 
     @PostMapping("refresh")
