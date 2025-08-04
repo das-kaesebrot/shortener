@@ -8,17 +8,17 @@ public class AuthResponseInitial extends AuthResponseBase {
     @Getter
     private String refreshToken;
 
+    @JsonProperty("refresh_token_expires_at")
+    @Getter
+    private Long refreshTokenExpiresAt;
+
     public AuthResponseInitial() {
         super();
     }
 
-    public AuthResponseInitial(AuthResponseBase base, String refreshToken) {
-        super(base.getJwt(), base.getPrincipalName(), base.getExpiresAt());
-        this.refreshToken = refreshToken;
-    }
-
-    public AuthResponseInitial(String jwt, String principalName, Long expiresAt, String refreshToken) {
+    public AuthResponseInitial(String jwt, String principalName, Long expiresAt, String refreshToken, Long refreshTokenExpiresAt) {
         super(jwt, principalName, expiresAt);
         this.refreshToken = refreshToken;
+        this.refreshTokenExpiresAt = refreshTokenExpiresAt;
     }
 }
