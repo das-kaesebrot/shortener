@@ -11,6 +11,10 @@ import eu.kaesebrot.dev.shortener.model.dto.response.AuthResponseRefresh;
 import eu.kaesebrot.dev.shortener.model.dto.response.AuthUserResponse;
 import eu.kaesebrot.dev.shortener.service.AuthService;
 import eu.kaesebrot.dev.shortener.service.RefreshTokenService;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +38,13 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("${shortener.hosting.subdirectory:}/api/v1/auth")
 @Tag(name = "auth", description = "The auth API")
+@SecurityScheme(
+        name = "Authorization",
+        scheme = "Bearer",
+        bearerFormat = "JWT",
+        type = SecuritySchemeType.HTTP,
+        in = SecuritySchemeIn.HEADER
+)
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthUserRepository userRepository;
