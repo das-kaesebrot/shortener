@@ -21,7 +21,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class Link implements Serializable {
     @Version
-    @Setter
     private long version;
 
     @Id
