@@ -15,7 +15,7 @@ public class AuthService {
     private final JwtService jwtService;
 
     public AuthResponseBase authenticate(AuthRequestInitial authRequestInitial) {
-        final var token = UsernamePasswordAuthenticationToken.unauthenticated(authRequestInitial.getUsername(), authRequestInitial.getPassword());
+        final var token = UsernamePasswordAuthenticationToken.unauthenticated(authRequestInitial.username(), authRequestInitial.password());
         Authentication authentication = authenticationManager.authenticate(token);
 
         String jwt = jwtService.generateToken(authentication);
