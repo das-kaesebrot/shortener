@@ -36,10 +36,9 @@ public class AuthController {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @PostMapping("users")
-    AuthUser registerUser(HttpServletRequest request, @Valid @RequestBody AuthUserCreationRequest authUserCreationRequest) {
-
-        if (userRepository.existsByEmail(authUserCreationRequest.email()) || userRepository.existsByUsername(authUserCreationRequest.username())) {
-            throw new IllegalArgumentException("User already exists!");
+    public ResponseEntity<AuthUser> registerUser(HttpServletRequest request, @Valid @RequestBody AuthUserCreationRequest authUserCreationRequest) {
+        if (userRepository.existsByUsernameOrEmail(authUserCreationRequest.username(),  authUserCreationRequest.email())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists!");
         }
 
         AuthUser user = new AuthUser(authUserCreationRequest.username(), passwordEncoder.encode(authUserCreationRequest.username()), authUserCreationRequest.email());
