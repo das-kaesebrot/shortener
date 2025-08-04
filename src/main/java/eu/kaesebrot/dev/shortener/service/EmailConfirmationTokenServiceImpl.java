@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,7 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
+    @Async
     public void generateAndSendConfirmationTokenToUser(AuthUser user, URI originalRequestUri,
                                                        String tokenConfirmationPath) {
         if (!verficationRequired) {
