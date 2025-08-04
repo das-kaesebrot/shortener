@@ -7,9 +7,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface LinkRepository extends JpaRepository<Link, String> {
-    Page<Link> findLinksByOwnerId(UUID ownerId, Pageable pageable);
+public interface LinkRepository extends JpaRepository<Link, UUID> {
+    Page<Link> findLinksByOwnerUsername(String ownerUsername, Pageable pageable);
+    Optional<Link> findByShortUri(String shortUri);
+    boolean existsByShortUri(String shortUri);
+    boolean existsByIdAndOwnerUsername(UUID id, String ownerUsername);
 }
