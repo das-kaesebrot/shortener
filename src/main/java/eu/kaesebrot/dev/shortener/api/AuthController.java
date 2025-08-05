@@ -95,7 +95,7 @@ public class AuthController {
         return ResponseEntity.ok(userRepository.findAll(Pageable.ofSize(size).withPage(page)).map(AuthUser::toDto));
     }
 
-    @GetMapping("users/me")
+    @GetMapping("me")
     @SecurityRequirement(name = "Authorization")
     public ResponseEntity<AuthUserResponse> getSelf(final Authentication authentication) {
         AuthUser user = userRepository.findById(UUID.fromString(authentication.getName())).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found"));
@@ -103,7 +103,7 @@ public class AuthController {
         return ResponseEntity.ok(user.toDto());
     }
 
-    @DeleteMapping("users/me")
+    @DeleteMapping("me")
     @SecurityRequirement(name = "Authorization")
     public ResponseEntity deleteSelf(final Authentication authentication) {
         long deletedUsers = userRepository.removeById(UUID.fromString(authentication.getName()));
