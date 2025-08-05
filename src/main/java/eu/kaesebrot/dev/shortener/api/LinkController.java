@@ -23,7 +23,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +47,6 @@ public class LinkController {
 
     @GetMapping
     @SecurityRequirement(name = "Authorization")
-    @PreAuthorize("hasAuthority('SCOPE_links')")
     ResponseEntity<Page<LinkResponse>> getAllLinks(@Valid @RequestParam Pageable pageable, final Authentication authentication) {
         boolean isAdmin = AuthUtils.hasScope(authentication, "SCOPE_links_admin");
 
@@ -62,7 +60,6 @@ public class LinkController {
     @PostMapping
     @Transactional
     @SecurityRequirement(name = "Authorization")
-    @PreAuthorize("hasAuthority('SCOPE_links')")
     public ResponseEntity<LinkResponse> createSingleLink(@Valid @RequestBody LinkRequestCreation linkRequestCreation, final Authentication authentication) {
         String linkId = linkRequestCreation.shortUri();
 
@@ -83,7 +80,6 @@ public class LinkController {
 
     @GetMapping("{id}")
     @SecurityRequirement(name = "Authorization")
-    @PreAuthorize("hasAuthority('SCOPE_links')")
     ResponseEntity<LinkResponse> getSingleLink(@PathVariable UUID id, final Authentication authentication) {
         boolean isAdmin = AuthUtils.hasScope(authentication, "SCOPE_links_admin");
 
@@ -96,7 +92,6 @@ public class LinkController {
 
     @PatchMapping("{id}")
     @SecurityRequirement(name = "Authorization")
-    @PreAuthorize("hasAuthority('SCOPE_links')")
     @Transactional
     ResponseEntity<LinkResponse> updateLink(@PathVariable UUID id, @Valid @RequestBody LinkRequestPatch linkRequestPatch, final Authentication authentication) {
         boolean isAdmin = AuthUtils.hasScope(authentication, "SCOPE_links_admin");
@@ -126,7 +121,6 @@ public class LinkController {
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @SecurityRequirement(name = "Authorization")
-    @PreAuthorize("hasAuthority('SCOPE_links')")
     @Transactional
     ResponseEntity deleteLink(@PathVariable UUID id, final Authentication authentication) {
         boolean isAdmin = AuthUtils.hasScope(authentication, "SCOPE_links_admin");

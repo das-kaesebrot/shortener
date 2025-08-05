@@ -23,7 +23,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -76,14 +75,12 @@ public class AuthController {
 
     @GetMapping("users/{id}")
     @SecurityRequirement(name = "Authorization")
-    @PreAuthorize("hasAuthority('SCOPE_users_read')")
     public ResponseEntity<AuthUserResponse> getUser(@PathVariable UUID id) {
         return ResponseEntity.ok(userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found")).toDto());
     }
 
     @DeleteMapping("users/{id}")
     @SecurityRequirement(name = "Authorization")
-    @PreAuthorize("hasAuthority('SCOPE_users_delete')")
     public ResponseEntity deleteUser(@PathVariable UUID id) {
         long deletedUsers = userRepository.removeById(id);
         if (deletedUsers <= 0) {
@@ -94,14 +91,12 @@ public class AuthController {
 
     @GetMapping("users")
     @SecurityRequirement(name = "Authorization")
-    @PreAuthorize("hasAuthority('SCOPE_users_read')")
-    public ResponseEntity<Page<AuthUserResponse>> getUsers(@Valid @RequestParam Pageable pageable) {
-        return ResponseEntity.ok(userRepository.findAll(pageable).map(AuthUser::toDto));
+    public ResponseEntity<Page<AuthUserResponse>> getUsers(@Valid @RequestParam(defaultValue = "0") @Min(0) int page, @Valid @RequestParam(defaultValue = "50") @Min(0) @Max(50) int size) {
+        return ResponseEntity.ok(userRepository.findAll(Pageable.ofSize(size).withPage(page)).map(AuthUser::toDto));
     }
 
     @GetMapping("users/me")
     @SecurityRequirement(name = "Authorization")
-    @PreAuthorize("hasAuthority('SCOPE_self')")
     public ResponseEntity<AuthUserResponse> getSelf(final Authentication authentication) {
         AuthUser user = userRepository.findById(UUID.fromString(authentication.getName())).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found"));
 
@@ -110,7 +105,6 @@ public class AuthController {
 
     @DeleteMapping("users/me")
     @SecurityRequirement(name = "Authorization")
-    @PreAuthorize("hasAuthority('SCOPE_self')")
     public ResponseEntity deleteSelf(final Authentication authentication) {
         long deletedUsers = userRepository.removeById(UUID.fromString(authentication.getName()));
         if (deletedUsers <= 0) {
@@ -139,7 +133,6 @@ public class AuthController {
 
     @PostMapping("logout")
     @SecurityRequirement(name = "Authorization")
-    @PreAuthorize("hasAuthority('SCOPE_self')")
     public ResponseEntity revokeSingleRefreshToken(final Authentication authentication, @Valid @RequestBody String refreshToken) {
         refreshTokenService.deleteRefreshTokenByRawToken(UUID.fromString(authentication.getName()), refreshToken);
         return ResponseEntity.noContent().build();
@@ -147,7 +140,6 @@ public class AuthController {
 
     @PostMapping("revoke")
     @SecurityRequirement(name = "Authorization")
-    @PreAuthorize("hasAuthority('SCOPE_self')")
     public ResponseEntity revokeAllRefreshTokens(final Authentication authentication) {
         refreshTokenService.deleteAllRefreshTokensOfUser(UUID.fromString(authentication.getName()));
         return ResponseEntity.noContent().build();
