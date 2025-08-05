@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import eu.kaesebrot.dev.shortener.utils.RandomStringGenerator;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
+@ActiveProfiles(profiles = "dev")
 class RandomStringGeneratorTests {
     @Autowired
     private RandomStringGenerator randomStringGenerator;
