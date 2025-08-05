@@ -111,7 +111,7 @@ public class LinkController {
         }
 
         if (linkRequestPatch.ownerUsername() != null && !linkRequestPatch.ownerUsername().equals(link.getOwner().getUsername())) {
-            AuthUser newOwner = authUserRepository.findByUsername(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User could not be found!"));
+            AuthUser newOwner = authUserRepository.findByUsername(linkRequestPatch.ownerUsername()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User could not be found!"));
             link.setOwner(newOwner);
         }
 
