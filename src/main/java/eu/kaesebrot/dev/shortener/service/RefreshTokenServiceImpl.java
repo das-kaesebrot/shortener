@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +38,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         return Optional.empty();
     }
 
-    private Optional<RefreshToken> getRefreshTokenByRawToken(String username, String rawRefreshToken, Instant expiresAt) {
-        AuthUser user = userRepository.findByUsername(username).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    private Optional<RefreshToken> getRefreshTokenByRawToken(UUID userId, String rawRefreshToken, Instant expiresAt) {
+        AuthUser user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         return getRefreshTokenByRawToken(user, rawRefreshToken, expiresAt);
     }
@@ -56,8 +57,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public String generateRefreshTokenForUser(String username, Instant expiresAt) {
-        AuthUser user = userRepository.findByUsername(username).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found"));
+    public String generateRefreshTokenForUser(UUID userId, Instant expiresAt) {
+        AuthUser user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found"));
         return generateRefreshTokenForUser(user, expiresAt);
     }
 
@@ -75,10 +76,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public boolean isRefreshTokenValid(String rawRefreshToken, String username) {
+    public boolean isRefreshTokenValid(String rawRefreshToken, UUID userId) {
         Instant now = Instant.now();
 
-        for (var token : refreshTokenRepository.findByUserUsernameAndExpiresAtAfter(username, now)) {
+        for (var token : refreshTokenRepository.findByUserIdAndExpiresAtAfter(userId, now)) {
             if (passwordEncoder.matches(rawRefreshToken, token.getRefreshTokenHash())) {
                 return true;
             }
@@ -96,8 +97,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     @Transactional
-    public void deleteRefreshTokenByRawToken(String username, String rawToken) {
-        RefreshToken token = getRefreshTokenByRawToken(username, rawToken, Instant.now()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The token could not be found"));
+    public void deleteRefreshTokenByRawToken(UUID userId, String rawToken) {
+        RefreshToken token = getRefreshTokenByRawToken(userId, rawToken, Instant.now()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The token could not be found"));
         refreshTokenRepository.delete(token);
     }
 
@@ -109,8 +110,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     @Transactional
-    public long deleteAllRefreshTokensOfUser(String username) {
-        return refreshTokenRepository.deleteByUserUsername(username);
+    public long deleteAllRefreshTokensOfUser(UUID userId) {
+        return refreshTokenRepository.deleteByUserId(userId);
     }
 
     @Override

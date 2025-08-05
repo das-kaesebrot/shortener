@@ -12,8 +12,8 @@ import java.util.UUID;
 
 @Repository
 public interface LinkRepository extends JpaRepository<Link, UUID> {
-    Page<Link> findLinksByOwnerUsername(String ownerUsername, Pageable pageable);
+    Page<Link> findLinksByOwnerId(UUID ownerId, Pageable pageable);
     Optional<Link> findByShortUri(String shortUri);
     boolean existsByShortUri(String shortUri);
-    boolean existsByIdAndOwnerUsername(UUID id, String ownerUsername);
+    boolean existsByIdAndOwnerId(UUID id, UUID ownerId);
 }

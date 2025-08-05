@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
+import java.util.UUID;
+
 public class AuthResponseInitial extends AuthResponseBase {
     @NotNull
     @JsonProperty("refresh_token")
@@ -19,8 +21,8 @@ public class AuthResponseInitial extends AuthResponseBase {
         super();
     }
 
-    public AuthResponseInitial(String jwt, String principalName, Long expiresAt, String refreshToken, Long refreshTokenExpiresAt) {
-        super(jwt, principalName, expiresAt);
+    public AuthResponseInitial(String jwt, UUID userId, Long expiresAt, String refreshToken, Long refreshTokenExpiresAt) {
+        super(jwt, userId, expiresAt);
         this.refreshToken = refreshToken;
         this.refreshTokenExpiresAt = refreshTokenExpiresAt;
     }

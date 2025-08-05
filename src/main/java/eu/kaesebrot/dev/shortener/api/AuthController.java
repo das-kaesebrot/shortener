@@ -103,7 +103,7 @@ public class AuthController {
     @SecurityRequirement(name = "Authorization")
     @PreAuthorize("hasAuthority('SCOPE_self')")
     public ResponseEntity<AuthUserResponse> getSelf(final Authentication authentication) {
-        AuthUser user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found"));
+        AuthUser user = userRepository.findById(UUID.fromString(authentication.getName())).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found"));
 
         return ResponseEntity.ok(user.toDto());
     }
@@ -112,7 +112,7 @@ public class AuthController {
     @SecurityRequirement(name = "Authorization")
     @PreAuthorize("hasAuthority('SCOPE_self')")
     public ResponseEntity deleteSelf(final Authentication authentication) {
-        long deletedUsers = userRepository.removeByUsername(authentication.getName());
+        long deletedUsers = userRepository.removeById(UUID.fromString(authentication.getName()));
         if (deletedUsers <= 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found");
         }
@@ -134,14 +134,14 @@ public class AuthController {
 
     @PostMapping("refresh")
     public ResponseEntity<AuthResponseRefresh> refreshJwt(@Valid @RequestBody AuthRequestRefresh request) {
-        return ResponseEntity.ok(authService.authenticateViaUsernameAndRefreshToken(request));
+        return ResponseEntity.ok(authService.authenticateViaUserIdAndRefreshToken(request));
     }
 
     @PostMapping("logout")
     @SecurityRequirement(name = "Authorization")
     @PreAuthorize("hasAuthority('SCOPE_self')")
     public ResponseEntity revokeSingleRefreshToken(final Authentication authentication, @Valid @RequestBody String refreshToken) {
-        refreshTokenService.deleteRefreshTokenByRawToken(authentication.getName(), refreshToken);
+        refreshTokenService.deleteRefreshTokenByRawToken(UUID.fromString(authentication.getName()), refreshToken);
         return ResponseEntity.noContent().build();
     }
 
@@ -149,7 +149,7 @@ public class AuthController {
     @SecurityRequirement(name = "Authorization")
     @PreAuthorize("hasAuthority('SCOPE_self')")
     public ResponseEntity revokeAllRefreshTokens(final Authentication authentication) {
-        refreshTokenService.deleteAllRefreshTokensOfUser(authentication.getName());
+        refreshTokenService.deleteAllRefreshTokensOfUser(UUID.fromString(authentication.getName()));
         return ResponseEntity.noContent().build();
     }
 

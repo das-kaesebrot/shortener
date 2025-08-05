@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -16,8 +17,8 @@ public class AuthResponseBase implements Serializable {
     private String jwt;
 
     @NotNull
-    @JsonProperty("principal_name")
-    private String principalName;
+    @JsonProperty("principal")
+    private UUID principal;
 
     @NotNull
     @JsonProperty("expires_at")

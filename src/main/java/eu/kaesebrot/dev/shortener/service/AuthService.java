@@ -30,24 +30,26 @@ public class AuthService {
         final var token = UsernamePasswordAuthenticationToken.unauthenticated(authRequestInitial.username(), authRequestInitial.password());
         Authentication authentication = authenticationManager.authenticate(token);
 
-        String jwt = jwtService.generateToken(authentication.getName(), authentication.getAuthorities());
+        final AuthUser user = authUserRepository.findByUsername(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username not found!"));
+
+        String jwt = jwtService.generateToken(user.getId(), authentication.getAuthorities());
         Long expiresAt = jwtService.extractExpirationTime(jwt);
         Instant refreshTokenExpiresAt = Instant.now().plus(jwtConfig.getRefreshTokenTtl());
-        String rawRefreshToken = refreshTokenService.generateRefreshTokenForUser(authentication.getName(), refreshTokenExpiresAt);
+        String rawRefreshToken = refreshTokenService.generateRefreshTokenForUser(user, refreshTokenExpiresAt);
 
-        return new AuthResponseInitial(jwt, authentication.getName(), expiresAt, rawRefreshToken, refreshTokenExpiresAt.toEpochMilli());
+        return new AuthResponseInitial(jwt, user.getId(), expiresAt, rawRefreshToken, refreshTokenExpiresAt.toEpochMilli());
     }
 
-    public AuthResponseRefresh authenticateViaUsernameAndRefreshToken(AuthRequestRefresh authRequestRefresh) {
-        if (!refreshTokenService.isRefreshTokenValid(authRequestRefresh.refreshToken(), authRequestRefresh.username())) {
+    public AuthResponseRefresh authenticateViaUserIdAndRefreshToken(AuthRequestRefresh authRequestRefresh) {
+        if (!refreshTokenService.isRefreshTokenValid(authRequestRefresh.refreshToken(), authRequestRefresh.userId())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid refresh token!");
         }
 
-        final AuthUser user = authUserRepository.findByUsername(authRequestRefresh.username()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username not found!"));
+        final AuthUser user = authUserRepository.findById(authRequestRefresh.userId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username not found!"));
 
-        String jwt = jwtService.generateToken(user.getUsername(), user.getAuthorities());
+        String jwt = jwtService.generateToken(user.getId(), user.getAuthorities());
         Long expiresAt = jwtService.extractExpirationTime(jwt);
 
-        return new AuthResponseRefresh(jwt, user.getUsername(), expiresAt);
+        return new AuthResponseRefresh(jwt, user.getId(), expiresAt);
     }
 }

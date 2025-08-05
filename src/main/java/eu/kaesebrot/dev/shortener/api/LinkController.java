@@ -56,7 +56,7 @@ public class LinkController {
             return ResponseEntity.ok(linkRepository.findAll(pageable).map(Link::toDto));
         }
 
-        return ResponseEntity.ok(linkRepository.findLinksByOwnerUsername(authentication.getName(), pageable).map(Link::toDto));
+        return ResponseEntity.ok(linkRepository.findLinksByOwnerId(UUID.fromString(authentication.getName()), pageable).map(Link::toDto));
     }
 
     @PostMapping
@@ -74,7 +74,7 @@ public class LinkController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Link with id %s already exists!", linkId));
         }
 
-        final AuthUser owner = authUserRepository.findByUsername(authentication.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User could not be found!"));
+        final AuthUser owner = authUserRepository.findById(UUID.fromString(authentication.getName())).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User could not be found!"));
         Link link = new Link(linkId, linkRequestCreation.shortUri(), owner);
         linkRepository.save(link);
 
@@ -87,7 +87,7 @@ public class LinkController {
     ResponseEntity<LinkResponse> getSingleLink(@PathVariable UUID id, final Authentication authentication) {
         boolean isAdmin = AuthUtils.hasScope(authentication, "SCOPE_links_admin");
 
-        if (!linkRepository.existsByIdAndOwnerUsername(id, authentication.getName()) || (isAdmin && !linkRepository.existsById(id))) {
+        if (!linkRepository.existsByIdAndOwnerId(id, UUID.fromString(authentication.getName())) || (isAdmin && !linkRepository.existsById(id))) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The link could not be found");
         }
 
@@ -101,7 +101,7 @@ public class LinkController {
     ResponseEntity<LinkResponse> updateLink(@PathVariable UUID id, @Valid @RequestBody LinkRequestPatch linkRequestPatch, final Authentication authentication) {
         boolean isAdmin = AuthUtils.hasScope(authentication, "SCOPE_links_admin");
 
-        if (!linkRepository.existsByIdAndOwnerUsername(id, authentication.getName()) || (isAdmin && !linkRepository.existsById(id))) {
+        if (!linkRepository.existsByIdAndOwnerId(id, UUID.fromString(authentication.getName())) || (isAdmin && !linkRepository.existsById(id))) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The link could not be found");
         }
 
@@ -131,7 +131,7 @@ public class LinkController {
     ResponseEntity deleteLink(@PathVariable UUID id, final Authentication authentication) {
         boolean isAdmin = AuthUtils.hasScope(authentication, "SCOPE_links_admin");
 
-        if (!linkRepository.existsByIdAndOwnerUsername(id, authentication.getName()) || (isAdmin && !linkRepository.existsById(id))) {
+        if (!linkRepository.existsByIdAndOwnerId(id, UUID.fromString(authentication.getName())) || (isAdmin && !linkRepository.existsById(id))) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The link could not be found");
         }
 
