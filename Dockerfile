@@ -1,4 +1,4 @@
-FROM gradle:8-jdk21 AS build
+FROM docker.io/gradle:8-jdk21 AS build
 
 ARG OUT_DIR=/srv/final
 
@@ -7,12 +7,12 @@ RUN gradle clean bootJar && \
     mkdir -pv ${OUT_DIR} && \
     mv -v build/libs/*.jar ${OUT_DIR}/app.jar
 
-FROM eclipse-temurin:21.0.7_6-jre AS app
+FROM docker.io/eclipse-temurin:21.0.7_6-jre AS app
 
-ARG BOT_UNIX_USER=shortener
+ARG APP_UNIX_USER=shortener
 
 # Create user and group to run as
-RUN useradd --system ${BOT_UNIX_USER}
+RUN useradd --system ${APP_UNIX_USER}
 
 ARG SPRING_FOLDER=/var/opt/shortener
 
@@ -23,10 +23,10 @@ RUN mkdir -pv ${SPRING_FOLDER}/logs && \
 ENV SPRING_PROFILES_ACTIVE=prod
 
 # Set proper perms
-RUN chown -R ${BOT_UNIX_USER}:${BOT_UNIX_USER} ${SPRING_FOLDER}
+RUN chown -R ${APP_UNIX_USER}:${APP_UNIX_USER} ${SPRING_FOLDER}
 
 # Set run user and group
-USER ${BOT_UNIX_USER}:${BOT_UNIX_USER}
+USER ${APP_UNIX_USER}:${APP_UNIX_USER}
 
 # Copy over compiled jar
 ARG JAR_PATH=/srv/final/app.jar
@@ -36,4 +36,6 @@ COPY --from=build ${JAR_PATH} app.jar
 
 RUN if [ ! -f "app.jar" ]; then exit 1; fi
 
-CMD ["java","-jar","app.jar"]
+COPY docker/entrypoint.sh .
+
+CMD ["./entrypoint.sh"]
