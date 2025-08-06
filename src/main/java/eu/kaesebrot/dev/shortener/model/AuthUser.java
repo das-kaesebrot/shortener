@@ -58,7 +58,7 @@ public class AuthUser implements UserDetails, CredentialsContainer {
     private Set<Link> links;
 
     @Setter
-    private UserRole userRole;
+    private UserRole role;
 
     @Column(nullable = true)
     @Getter
@@ -112,7 +112,7 @@ public class AuthUser implements UserDetails, CredentialsContainer {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return AuthUtils.convertScopesToAuthorities(AuthUtils.mapScopesFromUserRoleRecursively(userRole));
+        return AuthUtils.convertScopesToAuthorities(AuthUtils.mapScopesFromUserRoleRecursively(role));
     }
 
     @Override
