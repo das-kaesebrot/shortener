@@ -7,6 +7,7 @@ import eu.kaesebrot.dev.shortener.model.*;
 import eu.kaesebrot.dev.shortener.model.dto.request.AuthRequestInitial;
 import eu.kaesebrot.dev.shortener.model.dto.request.AuthRequestRefresh;
 import eu.kaesebrot.dev.shortener.model.dto.request.AuthUserRequestCreation;
+import eu.kaesebrot.dev.shortener.model.dto.request.AuthUserRequestPatch;
 import eu.kaesebrot.dev.shortener.model.dto.response.AuthResponseInitial;
 import eu.kaesebrot.dev.shortener.model.dto.response.AuthResponseRefresh;
 import eu.kaesebrot.dev.shortener.model.dto.response.AuthUserResponse;
@@ -57,6 +58,7 @@ public class AuthController {
     private final EmailConfirmationTokenService confirmationTokenService;
     private final AuthService authService;
     private final ShortenerConfig shortenerConfig;
+    private final PasswordEncoder passwordEncoder;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final RefreshTokenService refreshTokenService;
@@ -106,6 +108,28 @@ public class AuthController {
         AuthUser user = userRepository.findById(UUID.fromString(authentication.getName())).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found"));
 
         return ResponseEntity.ok(user.toDto());
+    }
+
+    @PatchMapping("me")
+    @SecurityRequirement(name = "Authorization")
+    @Transactional
+    public ResponseEntity<AuthUserResponse> patchSelf(HttpServletRequest request, final Authentication authentication, AuthUserRequestPatch patchRequest) {
+        AuthUser user = userRepository.findById(UUID.fromString(authentication.getName())).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "The user could not be found"));
+
+        if (patchRequest.rawPassword() != null) {
+            user.setPassword(passwordEncoder.encode(patchRequest.rawPassword()));
+        }
+
+        if (patchRequest.username() != null && !patchRequest.username().equals(user.getUsername())) {
+            user.setUsername(patchRequest.username());
+        }
+
+        if (patchRequest.email() != null && !patchRequest.email().equals(user.getEmail())) {
+            user.setEmail(patchRequest.email());
+            confirmationTokenService.generateAndSendConfirmationTokenToUser(user, URI.create(request.getRequestURL().toString()), String.format("api/v1/shortener/users/%s/confirm", user.getId().toString()));
+        }
+
+        return ResponseEntity.ok(userRepository.save(user).toDto());
     }
 
     @DeleteMapping("me")
