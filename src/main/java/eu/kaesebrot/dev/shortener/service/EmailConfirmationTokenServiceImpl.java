@@ -2,10 +2,10 @@ package eu.kaesebrot.dev.shortener.service;
 
 import java.net.URI;
 
+import eu.kaesebrot.dev.shortener.config.ShortenerConfig;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,9 +23,7 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
     private final AuthUserRepository authUserRepository;
     private final RandomStringGenerator randomStringGenerator;
     private final EmailSendingService emailSendingService;
-
-    @Value("${shortener.mail.verfication-required:false}")
-    private boolean verficationRequired;
+    private final ShortenerConfig shortenerConfig;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -33,7 +31,7 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
     @Async
     public void generateAndSendConfirmationTokenToUser(AuthUser user, URI originalRequestUri,
                                                        String tokenConfirmationPath) {
-        if (!verficationRequired) {
+        if (!shortenerConfig.isEmailVerificationRequired()) {
             logger.warn("Mail verification is disabled, skipping sending mail to user");
             return;
         }
@@ -61,7 +59,7 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
     @Override
     @Transactional
     public void redeemToken(AuthUser user, String rawToken) {
-        if (!verficationRequired) return;
+        if (!shortenerConfig.isEmailVerificationRequired()) return;
 
         if (!passwordEncoder.matches(rawToken, user.getHashedConfirmationToken())) {
             throw new IllegalArgumentException("Token doesn't match!");

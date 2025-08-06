@@ -1,8 +1,8 @@
 package eu.kaesebrot.dev.shortener.api;
 import java.net.URI;
-import java.util.Set;
 import java.util.UUID;
 
+import eu.kaesebrot.dev.shortener.config.ShortenerConfig;
 import eu.kaesebrot.dev.shortener.model.*;
 import eu.kaesebrot.dev.shortener.model.dto.request.AuthRequestInitial;
 import eu.kaesebrot.dev.shortener.model.dto.request.AuthRequestRefresh;
@@ -56,6 +56,7 @@ public class AuthController {
     private final AuthUserService userService;
     private final EmailConfirmationTokenService confirmationTokenService;
     private final AuthService authService;
+    private final ShortenerConfig shortenerConfig;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final RefreshTokenService refreshTokenService;
@@ -63,6 +64,10 @@ public class AuthController {
     @PostMapping("users")
     @Transactional
     public ResponseEntity<AuthUserResponse> registerUser(HttpServletRequest request, @Valid @RequestBody AuthUserRequestCreation authUserRequestCreation) {
+        if (!shortenerConfig.isUserSignupEnabled()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User registration is disabled!");
+        }
+
         if (userRepository.existsByUsernameOrEmail(authUserRequestCreation.username(),  authUserRequestCreation.email())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists!");
         }
