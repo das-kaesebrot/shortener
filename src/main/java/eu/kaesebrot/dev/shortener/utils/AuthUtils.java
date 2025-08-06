@@ -2,9 +2,13 @@ package eu.kaesebrot.dev.shortener.utils;
 
 import eu.kaesebrot.dev.shortener.enums.UserRole;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class AuthUtils {
     private AuthUtils() {}
@@ -42,5 +46,9 @@ public final class AuthUtils {
         }
 
         return new HashSet<>();
+    }
+
+    public static Collection<? extends GrantedAuthority> convertScopesToAuthorities(Set<String> scopes) {
+        return scopes.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
     }
 }

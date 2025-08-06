@@ -2,7 +2,9 @@ package eu.kaesebrot.dev.shortener.model;
 import java.time.Instant;
 import java.util.*;
 
+import eu.kaesebrot.dev.shortener.enums.UserRole;
 import eu.kaesebrot.dev.shortener.model.dto.response.AuthUserResponse;
+import eu.kaesebrot.dev.shortener.utils.AuthUtils;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -38,6 +40,7 @@ public class AuthUser implements UserDetails, CredentialsContainer {
 
     @Email
     @Column(unique=true)
+    @Setter
     private String email;
 
     @Column(nullable = true)
@@ -54,10 +57,8 @@ public class AuthUser implements UserDetails, CredentialsContainer {
     @Setter
     private Set<Link> links;
 
-    @ElementCollection(targetClass = GrantedAuthority.class)
-    @CollectionTable
     @Setter
-    private Set<GrantedAuthority> authorities = Collections.synchronizedSet(Set.of());
+    private UserRole userRole;
 
     @Column(nullable = true)
     @Getter
@@ -74,12 +75,11 @@ public class AuthUser implements UserDetails, CredentialsContainer {
     @Column(nullable = false)
     private Instant modifiedAt;
 
-    public AuthUser(@NotBlank String username, @NotBlank String passwordHash, String email, Set<GrantedAuthority> authorities) {
+    public AuthUser(@NotBlank String username, @NotBlank String passwordHash, String email) {
         this();
         this.username = username;
         this.passwordHash = passwordHash;
         this.email = email;
-        this.authorities = authorities;
     }
 
     public AuthUser() {
@@ -95,10 +95,6 @@ public class AuthUser implements UserDetails, CredentialsContainer {
 
     public void setPassword(String passwordHash) {
         this.passwordHash = passwordHash;
-    }
-
-    public void updateEmail(String email) {
-        this.email = email;
     }
 
     public void updateHashedConfirmationToken(String hashedConfirmationToken) {
@@ -118,19 +114,7 @@ public class AuthUser implements UserDetails, CredentialsContainer {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
-
-    public void addAuthority(GrantedAuthority authority) {
-        if (!this.authorities.add(authority)) {
-            throw new IllegalArgumentException("Authority is already present!");
-        }
-    }
-
-    public void removeAuthority(GrantedAuthority authority) {
-        if (!this.authorities.remove(authority)) {
-            throw new IllegalArgumentException("Authority wasn't present!");
-        }
+        return AuthUtils.convertScopesToAuthorities(AuthUtils.mapScopesFromUserRoleRecursively(userRole));
     }
 
     @Override
