@@ -101,8 +101,6 @@ public class AuthUser implements UserDetails, CredentialsContainer {
         if (this.hashedConfirmationToken.equals(hashedConfirmationToken)) {
             return;
         }
-
-        this.disableAccount();
         this.hashedConfirmationToken = hashedConfirmationToken;
     }
 

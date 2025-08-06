@@ -40,6 +40,7 @@ public class EmailConfirmationTokenServiceImpl implements EmailConfirmationToken
 
         String rawToken = randomStringGenerator.generateHexToken();
         user.updateHashedConfirmationToken(passwordEncoder.encode(rawToken));
+        user.disableAccount();
         authUserRepository.save(user);
 
         String portString = "";
