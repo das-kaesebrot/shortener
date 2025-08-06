@@ -11,6 +11,7 @@ import eu.kaesebrot.dev.shortener.model.dto.response.AuthResponseInitial;
 import eu.kaesebrot.dev.shortener.model.dto.response.AuthResponseRefresh;
 import eu.kaesebrot.dev.shortener.model.dto.response.AuthUserResponse;
 import eu.kaesebrot.dev.shortener.service.AuthService;
+import eu.kaesebrot.dev.shortener.service.AuthUserService;
 import eu.kaesebrot.dev.shortener.service.RefreshTokenService;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -26,7 +27,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,9 +53,9 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthUserRepository userRepository;
+    private final AuthUserService userService;
     private final EmailConfirmationTokenService confirmationTokenService;
     private final AuthService authService;
-    private final PasswordEncoder passwordEncoder;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final RefreshTokenService refreshTokenService;
@@ -67,9 +67,7 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists!");
         }
 
-        AuthUser user = new AuthUser(authUserRequestCreation.username(), passwordEncoder.encode(authUserRequestCreation.username()), authUserRequestCreation.email(), Set.of(new SimpleGrantedAuthority("SCOPE_self")));
-        userRepository.save(user);
-        
+        AuthUser user = userService.createNewUser(authUserRequestCreation.username(), authUserRequestCreation.email(), authUserRequestCreation.rawPassword());
         confirmationTokenService.generateAndSendConfirmationTokenToUser(user, URI.create(request.getRequestURL().toString()), String.format("api/v1/shortener/users/%s/confirm", user.getId().toString()));
 
         return ResponseEntity.ok(user.toDto());
