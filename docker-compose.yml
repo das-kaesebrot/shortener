@@ -2,7 +2,7 @@ version: "2"
 
 services:      
   db:
-    image: mariadb:10.11
+    image: mariadb:10.11@sha256:8763a63f00ec980d913c04bf84f7fd5f60aa11ac9033f36d1a77921c065a5988
     restart: always
     ports:
       - 3306:3306
@@ -15,7 +15,7 @@ services:
       - MYSQL_DATABASE=temp_db
 
   adminer:
-    image: adminer
+    image: adminer@sha256:b1d44e230bed34ff218882f2884e1e78f9659d968d3230a3974d9018172783ea
     depends_on:
       - db
     ports:
