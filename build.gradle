@@ -6,13 +6,17 @@ plugins {
 
 group = 'eu.kaesebrot.dev'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = JavaVersion.VERSION_21
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(21)
+  }
+}
 
 repositories {
 	mavenCentral()
 	maven {
-        url "https://jitpack.io"
+        url = "https://jitpack.io"
     }
 }
 
