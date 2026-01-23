@@ -2,7 +2,7 @@ version: "2"
 
 services:      
   db:
-    image: mariadb:12.0@sha256:607835cd628b78e2876f6a586d0ec37b296c47683b31ef750002d3d17d3d8f7a
+    image: mariadb:12.1@sha256:f54db0cb3ccfe9431aba6d08c65a1763c499789b116b4cb651dd7fcf325965b3
     restart: always
     ports:
       - 3306:3306
